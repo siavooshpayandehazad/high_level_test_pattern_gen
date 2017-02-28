@@ -1,10 +1,20 @@
 import Logger
-import sys
+import sys, os
 import copy
 import itertools
 import time
 
 sys.stdout = Logger.Logger()
+generated_files_folder = "generated_files"
+
+if os.path.exists("generated_files"):
+	file_list = [file for file in os.listdir("generated_files")]
+	for file in file_list:
+		os.remove("generated_files"+'/'+file)
+else:
+    os.mkdir("generated_files")
+
+
 
 def find_most_signifacant(function_dict, function_id_1, function_id_2, list_of_used_patterns, list_of_excluded_patterns, current_covered, debug, verbose):
 	list_of_ones_in_ands = {}
@@ -83,10 +93,10 @@ else:
 	debug = False
 
 if "-ot" in sys.argv[1:]:
-	output_table_file_name= sys.argv[sys.argv.index('-ot') + 1]
+	output_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ot') + 1]
 
 if "-op" in sys.argv[1:]:
-	output_patterns_file_name= sys.argv[sys.argv.index('-op') + 1]
+	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]
 
 start_time = time.time()
 function_dict = {}

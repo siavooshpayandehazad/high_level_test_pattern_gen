@@ -199,9 +199,12 @@ for func_id_1 in range(2, len_of_list):
 			patterns_file.write("--------------------------------\n")
 			patterns_file.write("Pattern No\t"+'%8s'%("f_"+str(func_id_1))+"    "+"f_"+str(func_id_2)+"\n")
 			patterns_file.write("---------\n")
+		
 			for item in best_solution:
 				patterns_file.write('%10s' %str(item)+"\t"+str(function_dict[item][0])+"    "+str(function_dict[item][1])+"\n")
+				
 			string += "\t"+str(sufficient)
+
 			number_of_ones_in_experiments  += sufficient.count("1")
 			if sufficient != "00000000":
 				number_of_zeros_in_experiments  += sufficient.count("0")
@@ -228,6 +231,13 @@ print "------------------------------------------"*3
 print "final list of patterns NOT used in the experiment:"
 print "number of patterns NOT used:", len(final_unsed_patterns)
 print sorted(final_unsed_patterns)
+
+print "------------------------------------------"*3
+print "------------------------------------------"*3
+print "final list of patterns"
+for item in sorted(final_set_of_patterns):
+		print '%10s' %str(item)+"\t"+str(function_dict[item][0])+"    "+str(function_dict[item][1])
+		
 print "------------------------------------------"*3
 print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"
 print "------------------------------------------"*3
@@ -237,3 +247,5 @@ print "NOTE: fault coverage =  (number of faults covered)/(number of faults cove
 print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
 print "------------------------------------------"*3
 print "program took ", str(stop_time-start_time), "seconds"
+
+

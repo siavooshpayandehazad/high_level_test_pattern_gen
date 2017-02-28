@@ -122,6 +122,7 @@ string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
 table_file.write(string+"\n")
 
 patterns_file = open(output_patterns_file_name, 'w')
+test_patterns_file = open("testpatterns.txt", 'w')
 
 number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
@@ -236,8 +237,9 @@ print "------------------------------------------"*3
 print "------------------------------------------"*3
 print "final list of patterns"
 for item in sorted(final_set_of_patterns):
-		print '%10s' %str(item)+"\t"+str(function_dict[item][0])+"    "+str(function_dict[item][1])
-		
+		print str(function_dict[item][0])+"    "+str(function_dict[item][1])
+		test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
+
 print "------------------------------------------"*3
 print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"
 print "------------------------------------------"*3
@@ -248,4 +250,4 @@ print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experimen
 print "------------------------------------------"*3
 print "program took ", str(stop_time-start_time), "seconds"
 
-
+test_patterns_file.close()

@@ -4,9 +4,42 @@ import copy
 
 sys.stdout = Logger.Logger()
 
+if "--help" in sys.argv[1:] or len(sys.argv[1:]) == 0:
+	print "---------------------------------------------------------------------------"
+	print "\n     Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran \n"
+	print "This program optimizes test patterns generation between different functions"
+	print "program arguments:"
+	print "-i [file name]: spcifies the path to the input file" 
+	#print "-ot [file name]: spcifies the path to the generated table file" 
+	#print "-op [file name]: spcifies the path to the generated patterns file" 
+	#print "-v: makes it more verbose" 
+	#print "-debug: enables debug printing"
+	print "---------------------------------------------------------------------------"
+	sys.exit()
+
+if "-i" in sys.argv[1:]:
+	input_file_name= sys.argv[sys.argv.index('-i') + 1]
+
+"""if "-v" in sys.argv[1:]:
+	verbose = True
+else:
+	verbose = False
+
+if "-debug" in sys.argv[1:]:
+	debug = True
+else:
+	debug = False
+
+if "-ot" in sys.argv[1:]:
+	output_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ot') + 1]
+
+if "-op" in sys.argv[1:]:
+	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]"""
+	
+
 function_dict = {}
 line_counter = 0
-with open('output.txt') as f:
+with open(input_file_name) as f:
 	for line in f:
 		if line != "":
 			line_counter += 1

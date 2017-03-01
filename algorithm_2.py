@@ -65,6 +65,8 @@ test_patterns_file = open(output_patterns_file_name, 'w')
 
 deletion_dic = {}
 used_dic = {}
+number_of_ones_in_experiments = 0
+number_of_zeros_in_experiments = 0
 
 for func_id_1 in range(2, len_of_list):
 	
@@ -103,13 +105,14 @@ for func_id_1 in range(2, len_of_list):
 							if i not in list_of_necessary_patterns:				
 								list_of_necessary_patterns.append(i)
 								print str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][func_id_1], "\t", function_dict[i][func_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op) , "\t\tadding pattern ", i, "to final pattern list!"
-								 
 						if or_op == "11111111":
 							print  "INFO::  reached all ones!"
 							break
 			if or_op != "11111111":
 				print  "INFO::  Didn't find a solution!"
-
+			number_of_ones_in_experiments  += or_op.count("1")
+			if or_op != "00000000":
+				number_of_zeros_in_experiments  += or_op.count("0")
 			print "final list of patterns:", list_of_necessary_patterns
 	
 
@@ -150,4 +153,11 @@ for item in sorted(deletion_dic.keys()):
 		print "------------------------------------------------------------"*2
 		counter = 1
 print "program took ", str(stop_time-start_time), "seconds"
+print "------------------------------------------"*3
+print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"
+print "------------------------------------------"*3
+print "number of faults covered:", number_of_ones_in_experiments
+print "number of faults not covered:" , number_of_zeros_in_experiments
+print "NOTE: fault coverage =  (number of faults covered)/(number of faults covered + number of faults not covered)"
+print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
 

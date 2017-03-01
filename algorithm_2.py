@@ -39,9 +39,12 @@ if "-debug" in sys.argv[1:]:
 	debug = True
 else:
 	debug = False
+"""
 
 if "-ot" in sys.argv[1:]:
-	output_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ot') + 1]"""
+	output_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ot') + 1]
+else:
+	output_table_file_name= generated_files_folder + "/" + "table.txt"
 
 if "-op" in sys.argv[1:]:
 	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]
@@ -61,6 +64,15 @@ with open(input_file_name) as f:
 len_of_list = len(function_dict[function_dict.keys()[0]])
 number_of_lines = len(function_dict.keys())
 
+
+table_file = open(output_table_file_name, 'w')
+string =  '%10s' %(" ")
+for function in range(2, len_of_list):
+	string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
+table_file.write(string+"\n")
+string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
+table_file.write(string+"\n")
+
 test_patterns_file = open(output_patterns_file_name, 'w')
 
 deletion_dic = {}
@@ -69,7 +81,7 @@ number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
 
 for func_id_1 in range(2, len_of_list):
-	
+	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
 	list_of_used_patterns =  range(1, number_of_lines+1)
 	list_of_necessary_patterns = []
 	for func_id_2 in range(2, len_of_list):		
@@ -110,6 +122,9 @@ for func_id_1 in range(2, len_of_list):
 							break
 			if or_op != "11111111":
 				print  "INFO::  Didn't find a solution!"
+
+			string += "\t"+str(or_op)
+
 			number_of_ones_in_experiments  += or_op.count("1")
 			if or_op != "00000000":
 				number_of_zeros_in_experiments  += or_op.count("0")
@@ -126,7 +141,9 @@ for func_id_1 in range(2, len_of_list):
 							if item not in list_of_necessary_patterns:
 								list_of_used_patterns.remove(item) 
 								#print "removed pattern no:", item
-
+		else:
+			string += "\t"+"xxxxxxxx"
+	table_file.write(string+"\n")
 	# Print patterns and functions.. This will be used to prepare test patterns for SAF testing in turbo tester
 	# This should only be used for VLIW experiment. Modification will be needed for other processors
 	print "-----------------------------------------------------"

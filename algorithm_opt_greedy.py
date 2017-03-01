@@ -116,7 +116,7 @@ number_of_lines = len(function_dict.keys())
 table_file = open(output_table_file_name, 'w')
 string =  '%10s' %(" ")
 for function in range(2, len_of_list):
-	string += "\t"+'%8s' %("f_"+str(function))
+	string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
 table_file.write(string+"\n")
 string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
 table_file.write(string+"\n")
@@ -129,7 +129,7 @@ number_of_zeros_in_experiments = 0
 
 final_set_of_patterns = []
 for func_id_1 in range(2, len_of_list):
-	string =  '%10s' %("f_"+str(func_id_1)+"|")
+	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
 	for func_id_2 in range(2, len_of_list):		
 		if func_id_1 != func_id_2:
 			list_of_used_patterns =  range(1, number_of_lines+1)
@@ -235,10 +235,13 @@ print sorted(final_unsed_patterns)
 
 print "------------------------------------------"*3
 print "------------------------------------------"*3
-print "final list of patterns"
+if verbose:
+	print "final list of patterns"
 for item in sorted(final_set_of_patterns):
-		print str(function_dict[item][0])+"    "+str(function_dict[item][1])
 		test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
+		if verbose:
+			print str(function_dict[item][0])+"    "+str(function_dict[item][1])
+		
 
 print "------------------------------------------"*3
 print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"

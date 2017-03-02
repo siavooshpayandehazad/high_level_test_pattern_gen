@@ -82,7 +82,7 @@ deletion_dic = {}
 used_dic = {}
 number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
-
+final_set_of_patterns = []
 for func_id_1 in range(2, len_of_list):
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
 	list_of_used_patterns =  range(1, number_of_lines+1)
@@ -135,8 +135,10 @@ for func_id_1 in range(2, len_of_list):
 			elif or_op != "00000000":
 				number_of_zeros_in_experiments  += or_op.count("0")
 			print "final list of patterns:", list_of_necessary_patterns
-	
-
+			for final_pattern in list_of_necessary_patterns:
+				if final_pattern not in final_set_of_patterns:
+					final_set_of_patterns.append(final_pattern)
+			
 			#print "final list of unused patterns:", list_of_pattens_to_delete
 			deletion_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(list_of_pattens_to_delete)
 			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(list_of_necessary_patterns)
@@ -160,10 +162,16 @@ for func_id_1 in range(2, len_of_list):
 		#test_patterns_file.write(str(j)+"\t"+function_dict[j][0]+"\t"+function_dict[j][1]+"\n")
 		test_patterns_file.write(function_dict[j][0]+function_dict[j][1]+opcode+"\n")
 	#test_patterns_file.write("\n")
+	
 
 test_patterns_file.close()
 stop_time = time.time()
+
+
+
 print "final list of patterns:", list_of_used_patterns
+
+
 print "-----------------------------------------------------"
 print "list of possible removals for each pair of functions:"
 print "function pair", "\t", "\t", '%100s' % "usefull patterns"
@@ -175,7 +183,25 @@ for item in sorted(deletion_dic.keys()):
 	if counter == len_of_list-2:
 		print "------------------------------------------------------------"*2
 		counter = 1
-print "program took ", str(stop_time-start_time), "seconds"
+
+
+final_unsed_patterns = []
+for item in range(1, number_of_lines+1):
+	if item not in final_set_of_patterns:
+		final_unsed_patterns.append(item)
+print "------------------------------------------"*3
+print "|"+"                                         "*3+" |"
+print "|"+"                                         "+"                RESULTS                  "+"                                         "+" |"
+print "|"+"                                         "*3+" |"
+print "------------------------------------------"*3
+print "final list of patterns used in the experiment:"
+print "number of patterns used:", len(final_set_of_patterns)
+print sorted(final_set_of_patterns)
+print "------------------------------------------"*3
+print "final list of patterns NOT used in the experiment:"
+print "number of patterns NOT used:", len(final_unsed_patterns)
+print sorted(final_unsed_patterns)
+
 print "------------------------------------------"*3
 print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"
 print "------------------------------------------"*3
@@ -183,4 +209,5 @@ print "number of faults covered:", number_of_ones_in_experiments
 print "number of faults not covered:" , number_of_zeros_in_experiments
 print "NOTE: fault coverage =  (number of faults covered)/(number of faults covered + number of faults not covered)"
 print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
-
+print "------------------------------------------"*3
+print "program took ", str(stop_time-start_time), "seconds"

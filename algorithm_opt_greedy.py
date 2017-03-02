@@ -140,15 +140,17 @@ for func_id_1 in range(2, len_of_list):
 			list_of_used_patterns =  range(1, number_of_lines+1)
 			if verbose:
 				print "------------------------------------------"*3
-				print "function 1: ", func_id_1, "function 2:", func_id_2
+				print "function 1: ", func_id_1-1, "function 2:", func_id_2-1
 				print "------------------------------------------"*3
 			
 			counter = 0
-			list_of_excluded_patterns = []
+			list_of_excluded_patterns = copy.deepcopy(final_set_of_patterns)
 			break_the_loop = False
 			best_solution = []
 			best_value = 0
-			sufficient =  "00000000"
+
+			sufficient =  check_if_sufficient(function_dict, func_id_1, func_id_2, list_of_excluded_patterns, debug, verbose)
+
 			while(counter < number_of_lines):
 				list_of_ones_in_ands = find_most_signifacant(function_dict, func_id_1, func_id_2, list_of_used_patterns, list_of_excluded_patterns, sufficient, debug, verbose)
 			 	#print list_of_ones_in_ands

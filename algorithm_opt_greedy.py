@@ -134,6 +134,7 @@ number_of_zeros_in_experiments = 0
 
 final_set_of_patterns = []
 for func_id_1 in range(2, len_of_list):
+	scanning_test = "00000000"
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
 	for func_id_2 in range(2, len_of_list):		
 		if func_id_1 != func_id_2:
@@ -175,6 +176,7 @@ for func_id_1 in range(2, len_of_list):
 						sufficient =  check_if_sufficient(function_dict, func_id_1, func_id_2, list_of_excluded_patterns+list(item), debug, verbose)
 						if sufficient.count("1") == len(sufficient):
 						 	best_solution = copy.deepcopy(list_of_excluded_patterns+list(item))
+						 	scanning_test = format(int(scanning_test, 2) | int(function_dict[item[0]][func_id_1], 2), 'b').zfill(8)
 						 	if verbose:
 							 	print "\twe got it!"
 						 	break_the_loop = True
@@ -200,7 +202,7 @@ for func_id_1 in range(2, len_of_list):
 				if verbose:
 					print "\t------------------------------------------------------------------"
 			if verbose:
-				print "best_solution for func ", func_id_1, " and func ", func_id_2, ": ", sufficient, best_solution
+				print "best_solution for func ", func_id_1-1, " and func ", func_id_2-1, ": ", sufficient, best_solution
 			for final_pattern in best_solution:
 				if final_pattern not in final_set_of_patterns:
 					final_set_of_patterns.append(final_pattern)
@@ -222,6 +224,7 @@ for func_id_1 in range(2, len_of_list):
 			
 		else:
 			string += "\t"+"xxxxxxxx"
+	print "SCANNING RESULT for function", func_id_1, ": ", scanning_test
 	table_file.write(string+"\n")
 stop_time = time.time()
 

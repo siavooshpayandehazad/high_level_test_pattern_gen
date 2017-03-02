@@ -2,6 +2,7 @@ import Logger
 import sys, os
 import copy
 import time
+import package
 
 sys.stdout = Logger.Logger()
 
@@ -48,6 +49,8 @@ else:
 
 if "-op" in sys.argv[1:]:
 	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]
+else:
+	output_patterns_file_name= generated_files_folder + "/" + "patterns.txt"
 
 start_time = time.time()
 function_dict = {}
@@ -126,7 +129,10 @@ for func_id_1 in range(2, len_of_list):
 			string += "\t"+str(or_op)
 
 			number_of_ones_in_experiments  += or_op.count("1")
-			if or_op != "00000000":
+			if str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys():
+				#print "here", func_id_1-1, func_id_2-1, or_op, package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)]
+				number_of_zeros_in_experiments  += or_op.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
+			elif or_op != "00000000":
 				number_of_zeros_in_experiments  += or_op.count("0")
 			print "final list of patterns:", list_of_necessary_patterns
 	

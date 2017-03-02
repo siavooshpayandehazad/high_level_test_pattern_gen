@@ -3,6 +3,7 @@ import sys, os
 import copy
 import itertools
 import time
+import package
 
 sys.stdout = Logger.Logger()
 generated_files_folder = "generated_files"
@@ -94,9 +95,13 @@ else:
 
 if "-ot" in sys.argv[1:]:
 	output_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ot') + 1]
-
+else:
+	output_table_file_name= generated_files_folder + "/" + "table.txt"
+	
 if "-op" in sys.argv[1:]:
 	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]
+else:
+	output_patterns_file_name= generated_files_folder + "/" + "patterns.txt"
 
 start_time = time.time()
 function_dict = {}
@@ -122,7 +127,7 @@ string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
 table_file.write(string+"\n")
 
 patterns_file = open(output_patterns_file_name, 'w')
-test_patterns_file = open("testpatterns.txt", 'w')
+test_patterns_file = open(generated_files_folder + "/" +"testpatterns.txt", 'w')
 
 number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
@@ -206,9 +211,13 @@ for func_id_1 in range(2, len_of_list):
 				
 			string += "\t"+str(sufficient)
 
-			number_of_ones_in_experiments  += sufficient.count("1")
-			if sufficient != "00000000":
+			if str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys():
+				#print "here", func_id_1-1, func_id_2-1, sufficient, package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)]
+				number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
+			elif sufficient != "00000000":
 				number_of_zeros_in_experiments  += sufficient.count("0")
+			number_of_ones_in_experiments  += sufficient.count("1")
+			
 		else:
 			string += "\t"+"xxxxxxxx"
 	table_file.write(string+"\n")
@@ -246,6 +255,7 @@ for item in sorted(final_set_of_patterns):
 print "------------------------------------------"*3
 print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"
 print "------------------------------------------"*3
+print "number of patterns:", number_of_lines
 print "number of faults covered:", number_of_ones_in_experiments
 print "number of faults not covered:" , number_of_zeros_in_experiments
 print "NOTE: fault coverage =  (number of faults covered)/(number of faults covered + number of faults not covered)"

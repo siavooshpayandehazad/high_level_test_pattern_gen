@@ -20,9 +20,10 @@ if "--help" in sys.argv[1:] or len(sys.argv[1:]) == 0:
 	print "\n     Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran \n"
 	print "This program optimizes test patterns generation between different functions"
 	print "program arguments:"
-	print "-i [file name]: spcifies the path to the input file" 
-	#print "-ot [file name]: spcifies the path to the generated table file" 
-	print "-op [file name]: spcifies the path to the generated patterns file" 
+	print "-i [file name]: specifies the path to the input file" 
+	print "-ot [file name]: spcifies the path to the generated table file" 
+	print "-op [file name]: specifies the path to the generated patterns file" 
+	print "-sp [file name]: specifies the path to the generated SAFpatterns file" 
 	#print "-v: makes it more verbose" 
 	#print "-debug: enables debug printing"
 	print "---------------------------------------------------------------------------"
@@ -47,10 +48,14 @@ if "-ot" in sys.argv[1:]:
 else:
 	output_table_file_name= generated_files_folder + "/" + "table.txt"
 
+if "-sp" in sys.argv[1:]:
+	saf_output_patterns_file_name= generated_files_folder + "/" +"SAF"+ sys.argv[sys.argv.index('-sp') + 1]
+else:
+	saf_output_patterns_file_name= generated_files_folder + "/" + "SAFpatterns.txt"
 if "-op" in sys.argv[1:]:
 	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]
 else:
-	output_patterns_file_name= generated_files_folder + "/" + "patterns.txt"
+	output_patterns_file_name= generated_files_folder + "/" + "final_patterns.txt"
 
 start_time = time.time()
 function_dict = {}
@@ -76,6 +81,7 @@ table_file.write(string+"\n")
 string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
 table_file.write(string+"\n")
 
+saf_test_patterns_file = open(saf_output_patterns_file_name, 'w')
 test_patterns_file = open(output_patterns_file_name, 'w')
 
 deletion_dic = {}
@@ -93,7 +99,7 @@ for func_id_1 in range(2, len_of_list):
 			list_of_pattens_to_delete = []
 			print "---------------------------------------------------------------------------------------"
 			print "---------------------------------------------------------------------------------------"
-			print "function_1: ", func_id_1, "function_2:", func_id_2
+			print "function_1: ", func_id_1-1, "function_2:", func_id_2-1
 			print "line\top1\t\top2\t\tfunc_1 \t\t func_2\t\txor(1,2)\tand(1,xor)\tor(prev_or,and)"
 			print "---------------------------------------------------------------------------------------"
 			print "starting with list: ", list_of_necessary_patterns
@@ -156,21 +162,24 @@ for func_id_1 in range(2, len_of_list):
 	# This should only be used for VLIW experiment. Modification will be needed for other processors
 	print "-----------------------------------------------------"
 	print "function_1: ",func_id_1
+	pat =[]
 	opcode = "{0:04b}".format((func_id_1-2))
 	#test_patterns_file.write("function_1: "+str(func_id_1)+ " "+str(opcode)+"\n")
 	for j in list_of_necessary_patterns:
 		#test_patterns_file.write(str(j)+"\t"+function_dict[j][0]+"\t"+function_dict[j][1]+"\n")
-		test_patterns_file.write(function_dict[j][0]+function_dict[j][1]+opcode+"\n")
+		saf_test_patterns_file.write(function_dict[j][0]+function_dict[j][1]+opcode+"\n")
 	#test_patterns_file.write("\n")
-	
+
+# final set of patterns	
+for k in final_set_of_patterns:
+	test_patterns_file.write(function_dict[k][0]+function_dict[k][1]+"\n")
 
 test_patterns_file.close()
+saf_test_patterns_file.close()
 stop_time = time.time()
 
 
-
 print "final list of patterns:", list_of_used_patterns
-
 
 print "-----------------------------------------------------"
 print "list of possible removals for each pair of functions:"

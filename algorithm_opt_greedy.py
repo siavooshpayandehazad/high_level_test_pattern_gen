@@ -16,11 +16,10 @@ else:
     os.mkdir("generated_files")
 
 
-
 def find_most_signifacant(function_dict, function_id_1, function_id_2, list_of_used_patterns, list_of_excluded_patterns, current_covered, debug, verbose):
 	list_of_ones_in_ands = {}
 	or_op = "00000000"
-	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)
+	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
 	if verbose:
 		print "\tcurrently covered:", current_covered
 		print "\tcurrently not covered:", not_covered
@@ -44,8 +43,6 @@ def find_most_signifacant(function_dict, function_id_1, function_id_2, list_of_u
 	return list_of_ones_in_ands
 
 def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patterns, debug, verbose):
-	
-	
 	or_op = "00000000"
 	if debug:
 		print "\t--------------------"
@@ -154,18 +151,15 @@ for func_id_1 in range(2, len_of_list):
 
 			while(counter < number_of_lines):
 				list_of_ones_in_ands = find_most_signifacant(function_dict, func_id_1, func_id_2, list_of_used_patterns, list_of_excluded_patterns, sufficient, debug, verbose)
-			 	#print list_of_ones_in_ands
 			 	if len(list_of_ones_in_ands.keys())>0:
 			 		if verbose:
 					 	print "\tmax number of ones:", max(list_of_ones_in_ands.keys())
 				 	
 				 	if max(list_of_ones_in_ands.keys()) == 0: 
 				 		break
-				 	#old_found_patterns = copy.deepcopy(best_solution)
 				 	list_of_best_patterns = list_of_ones_in_ands[max(list_of_ones_in_ands.keys())]
 				 	if verbose:
 					 	print "\tbest patterns in this round:", list_of_best_patterns
-
 					for item in list_of_best_patterns:
 						if type(item) == int: 
 							item = [item]

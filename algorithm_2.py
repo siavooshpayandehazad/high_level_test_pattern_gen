@@ -148,13 +148,13 @@ for func_id_1 in range(2, len_of_list):
 			#print "final list of unused patterns:", list_of_pattens_to_delete
 			deletion_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(list_of_pattens_to_delete)
 			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(list_of_necessary_patterns)
-			if len(list_of_pattens_to_delete)>0 and len(list_of_necessary_patterns)>0: 
-				for item in list_of_pattens_to_delete:
-					if item < max(list_of_necessary_patterns):
-						if item in list_of_used_patterns:
-							if item not in list_of_necessary_patterns:
-								list_of_used_patterns.remove(item) 
-								#print "removed pattern no:", item
+			#if len(list_of_pattens_to_delete)>0 and len(list_of_necessary_patterns)>0: 
+			#	for item in list_of_pattens_to_delete:
+			#		if item < max(list_of_necessary_patterns):
+			#			if item in list_of_used_patterns:
+			#				if item not in list_of_necessary_patterns:
+			#					list_of_used_patterns.remove(item) 
+			#					#print "removed pattern no:", item
 		else:
 			string += "\t"+"xxxxxxxx"
 	table_file.write(string+"\n")
@@ -187,7 +187,7 @@ print "function pair", "\t", "\t", '%100s' % "usefull patterns"
 print "-------------", "\t", "\t", '%100s' % "----------------"
 counter = 1
 for item in sorted(deletion_dic.keys()):
-	print '%10s' %item, "\t",'%100s' %used_dic[item]
+	print '%10s' %str(int(item.split("_")[0])-1)+"_"+str(int(item.split("_")[1])-1), "\t",'%100s' %used_dic[item]
 	counter += 1
 	if counter == len_of_list-2:
 		print "------------------------------------------------------------"*2

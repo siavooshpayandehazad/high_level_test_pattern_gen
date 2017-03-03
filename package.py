@@ -69,10 +69,10 @@ def print_results(final_set_of_patterns, final_unsed_patterns):
 	print "number of patterns used:", len(final_set_of_patterns)
 	print sorted(final_set_of_patterns)
 
-	print "------------------------------------------"*3
-	print "final list of patterns NOT used in the experiment:"
-	print "number of patterns NOT used:", len(final_unsed_patterns)
-	print sorted(final_unsed_patterns)
+	#print "------------------------------------------"*3
+	#print "final list of patterns NOT used in the experiment:"
+	#print "number of patterns NOT used:", len(final_unsed_patterns)
+	#print sorted(final_unsed_patterns)
 
 def print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments):
 	print "------------------------------------------"*3

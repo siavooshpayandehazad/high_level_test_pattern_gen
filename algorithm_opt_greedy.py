@@ -1,5 +1,5 @@
 import Logger
-import sys, os
+import sys
 import copy
 import itertools
 import time
@@ -8,12 +8,7 @@ import package
 sys.stdout = Logger.Logger()
 generated_files_folder = "generated_files"
 
-if os.path.exists("generated_files"):
-	file_list = [file for file in os.listdir("generated_files")]
-	for file in file_list:
-		os.remove("generated_files"+'/'+file)
-else:
-    os.mkdir("generated_files")
+package.generate_folders(generated_files_folder)
 
 
 def find_most_signifacant(function_dict, function_id_1, function_id_2, list_of_used_patterns, list_of_excluded_patterns, current_covered, debug, verbose):
@@ -64,63 +59,7 @@ def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patter
 			print "\tdidnt reach all ones!"
 		return or_op
 
-
-def find_most_signifacant_scanning(function_dict, function_id_1, current_covered, debug, verbose):
-	list_of_ones_in_ands = {}
-
-	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
-	if verbose:
-		print "\tcurrently covered:", current_covered
-		print "\tcurrently not covered:", not_covered
-	for i in sorted(function_dict.keys()):
-		new_ones =  format(int(not_covered, 2) & int(function_dict[i][function_id_1], 2), 'b').zfill(8) 
-		if new_ones.count("1") in list_of_ones_in_ands.keys():
-			list_of_ones_in_ands[new_ones.count("1")].append(i)
-		else:
-			list_of_ones_in_ands[new_ones.count("1")] = [i]
-	return list_of_ones_in_ands
-
-if "--help" in sys.argv[1:] or len(sys.argv[1:]) == 0:
-	print "---------------------------------------------------------------------------"
-	print "\n     Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran \n"
-	print "This program optimizes test patterns generation between different functions"
-	print "program arguments:"
-	print "-i [file name]: spcifies the path to the input file" 
-	print "-ot [file name]: spcifies the path to the generated table file" 
-	print "-ost [file name]: spcifies the path to the generated table file for scanning test" 
-	print "-op [file name]: spcifies the path to the generated patterns file" 
-	print "-v: makes it more verbose" 
-	print "-debug: enables debug printing"
-	print "---------------------------------------------------------------------------"
-	sys.exit()
-
-if "-i" in sys.argv[1:]:
-	input_file_name= sys.argv[sys.argv.index('-i') + 1]
-
-if "-v" in sys.argv[1:]:
-	verbose = True
-else:
-	verbose = False
-
-if "-debug" in sys.argv[1:]:
-	debug = True
-else:
-	debug = False
-
-if "-ot" in sys.argv[1:]:
-	output_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ot') + 1]
-else:
-	output_table_file_name= generated_files_folder + "/" + "table.txt"
-	
-if "-op" in sys.argv[1:]:
-	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]
-else:
-	output_patterns_file_name= generated_files_folder + "/" + "patterns.txt"
-
-if "-ost" in sys.argv[1:]:
-	scanning_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ost') + 1]
-else:
-	scanning_table_file_name= generated_files_folder + "/" + "scanning_table.txt"
+input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name = package.parse_program_arg(sys.argv, generated_files_folder)
 
 start_time = time.time()
 function_dict = {}
@@ -138,21 +77,11 @@ len_of_list = len(function_dict[function_dict.keys()[0]])
 number_of_lines = len(function_dict.keys())
 
 table_file = open(output_table_file_name, 'w')
-string =  '%10s' %(" ")
-for function in range(2, len_of_list):
-	string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
-table_file.write(string+"\n")
-string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
-table_file.write(string+"\n")
-
-
 scanning_table_file = open(scanning_table_file_name, 'w')
-string =  '%10s' %(" ")
-for function in range(2, len_of_list):
-	string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
-scanning_table_file.write(string+"\n")
-string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
-scanning_table_file.write(string+"\n")
+
+package.make_table_header(table_file, len_of_list)
+package.make_table_header(scanning_table_file, len_of_list)
+
 
 patterns_file = open(output_patterns_file_name, 'w')
 test_patterns_file = open(generated_files_folder + "/" +"testpatterns.txt", 'w')
@@ -240,7 +169,7 @@ for func_id_1 in range(2, len_of_list):
 			if verbose:		
 				print "scanning test resutls for func pair: "+str(func_id_1)+",", func_id_2, ":", scanning_test_f1_f2
 			if scanning_test_f1_f2.count("1") != len(scanning_test_f1_f2):
-				scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
+				scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
 				max_coverable_scanning = max(scanning_dict.keys())
 				if verbose:
 					print "number of missing ones:", scanning_test_f1_f2.count("0")
@@ -262,7 +191,7 @@ for func_id_1 in range(2, len_of_list):
 								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
 							best_solution.append(scanning_dict[max_coverable_scanning][0])
 							scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
-							scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
+							scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
 							max_coverable_scanning = max(scanning_dict.keys())
 							if scanning_test_f1_f2.count("0") == max_coverable_scanning:
 								if scanning_dict[max_coverable_scanning][0] not in best_solution:
@@ -274,7 +203,6 @@ for func_id_1 in range(2, len_of_list):
 								break
 			if verbose:
 				print "------------------------------"
-
 
 			for final_pattern in best_solution:
 				if final_pattern not in final_set_of_patterns:
@@ -316,37 +244,20 @@ final_unsed_patterns = []
 for item in range(1, number_of_lines+1):
 	if item not in final_set_of_patterns:
 		final_unsed_patterns.append(item)
-print "------------------------------------------"*3
-print "|"+"                                         "*3+" |"
-print "|"+"                                         "+"                RESULTS                  "+"                                         "+" |"
-print "|"+"                                         "*3+" |"
-print "------------------------------------------"*3
-print "final list of patterns used in the experiment:"
-print "number of patterns used:", len(final_set_of_patterns)
-print sorted(final_set_of_patterns)
-print "------------------------------------------"*3
-print "final list of patterns NOT used in the experiment:"
-print "number of patterns NOT used:", len(final_unsed_patterns)
-print sorted(final_unsed_patterns)
 
-print "------------------------------------------"*3
-print "------------------------------------------"*3
+package.print_results(final_set_of_patterns, final_unsed_patterns)
+
+
 if verbose:
+	print "------------------------------------------"*3 
 	print "final list of patterns"
 for item in sorted(final_set_of_patterns):
 		test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
 		if verbose:
 			print str(function_dict[item][0])+"    "+str(function_dict[item][1])
 		
+package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 
-print "------------------------------------------"*3
-print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"
-print "------------------------------------------"*3
-print "number of patterns:", number_of_lines
-print "number of faults covered:", number_of_ones_in_experiments
-print "number of faults not covered:" , number_of_zeros_in_experiments
-print "NOTE: fault coverage =  (number of faults covered)/(number of faults covered + number of faults not covered)"
-print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
 print "------------------------------------------"*3
 print "program took ", str(stop_time-start_time), "seconds"
 

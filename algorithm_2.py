@@ -1,5 +1,5 @@
 import Logger
-import sys, os
+import sys
 import copy
 import time
 import package
@@ -8,78 +8,15 @@ sys.stdout = Logger.Logger()
 
 generated_files_folder = "generated_files"
 
-if os.path.exists("generated_files"):
-	file_list = [file for file in os.listdir("generated_files")]
-	for file in file_list:
-		os.remove("generated_files"+'/'+file)
-else:
-    os.mkdir("generated_files")
+package.generate_folders(generated_files_folder)
 
-
-def find_most_signifacant_scanning(function_dict, function_id_1, current_covered, debug, verbose):
-	list_of_ones_in_ands = {}
-
-	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
-	if verbose:
-		print "\tcurrently covered:", current_covered
-		print "\tcurrently not covered:", not_covered
-	for i in sorted(function_dict.keys()):
-		new_ones =  format(int(not_covered, 2) & int(function_dict[i][function_id_1], 2), 'b').zfill(8) 
-		if new_ones.count("1") in list_of_ones_in_ands.keys():
-			list_of_ones_in_ands[new_ones.count("1")].append(i)
-		else:
-			list_of_ones_in_ands[new_ones.count("1")] = [i]
-	return list_of_ones_in_ands
-
-if "--help" in sys.argv[1:] or len(sys.argv[1:]) == 0:
-	print "---------------------------------------------------------------------------"
-	print "\n     Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran \n"
-	print "This program optimizes test patterns generation between different functions"
-	print "program arguments:"
-	print "-i [file name]: specifies the path to the input file" 
-	print "-ot [file name]: spcifies the path to the generated table file" 
-	print "-ost [file name]: spcifies the path to the generated table file for scanning test" 
-	print "-op [file name]: specifies the path to the generated patterns file" 
-	print "-sp [file name]: specifies the path to the generated SAFpatterns file" 
-	#print "-v: makes it more verbose" 
-	#print "-debug: enables debug printing"
-	print "---------------------------------------------------------------------------"
-	sys.exit()
-
-if "-i" in sys.argv[1:]:
-	input_file_name= sys.argv[sys.argv.index('-i') + 1]
-
-verbose = True
-debug = True
-"""if "-v" in sys.argv[1:]:
-	verbose = True
-else:
-	verbose = False
-
-if "-debug" in sys.argv[1:]:
-	debug = True
-else:
-	debug = False
-"""
-
-if "-ot" in sys.argv[1:]:
-	output_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ot') + 1]
-else:
-	output_table_file_name= generated_files_folder + "/" + "table.txt"
 
 if "-sp" in sys.argv[1:]:
 	saf_output_patterns_file_name= generated_files_folder + "/" +"SAF"+ sys.argv[sys.argv.index('-sp') + 1]
 else:
 	saf_output_patterns_file_name= generated_files_folder + "/" + "SAFpatterns.txt"
-if "-op" in sys.argv[1:]:
-	output_patterns_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-op') + 1]
-else:
-	output_patterns_file_name= generated_files_folder + "/" + "final_patterns.txt"
 
-if "-ost" in sys.argv[1:]:
-	scanning_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ost') + 1]
-else:
-	scanning_table_file_name= generated_files_folder + "/" + "scanning_table.txt"
+input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name = package.parse_program_arg(sys.argv, generated_files_folder)
 
 start_time = time.time()
 function_dict = {}
@@ -96,24 +33,12 @@ with open(input_file_name) as f:
 len_of_list = len(function_dict[function_dict.keys()[0]])
 number_of_lines = len(function_dict.keys())
 
-
 table_file = open(output_table_file_name, 'w')
-string =  '%10s' %(" ")
-for function in range(2, len_of_list):
-	string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
-table_file.write(string+"\n")
-string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
-table_file.write(string+"\n")
-
-
 scanning_table_file = open(scanning_table_file_name, 'w')
-string =  '%10s' %(" ")
-for function in range(2, len_of_list):
-	string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
-scanning_table_file.write(string+"\n")
-string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
-scanning_table_file.write(string+"\n")
 
+package.make_table_header(table_file, len_of_list)
+package.make_table_header(scanning_table_file, len_of_list)
+ 
 saf_test_patterns_file = open(saf_output_patterns_file_name, 'w')
 test_patterns_file = open(output_patterns_file_name, 'w')
 
@@ -132,19 +57,21 @@ for func_id_1 in range(2, len_of_list):
 		if func_id_1 != func_id_2:
 			scanning_test_f1_f2 = "00000000"
 			list_of_pattens_to_delete = []
-			print "---------------------------------------------------------------------------------------"
-			print "---------------------------------------------------------------------------------------"
-			print "function_1: ", func_id_1-1, "function_2:", func_id_2-1
-			print "line\top1\t\top2\t\tfunc_1 \t\t func_2\t\txor(1,2)\tand(1,xor)\tor(prev_or,and)"
-			print "---------------------------------------------------------------------------------------"
-			print "starting with list: ", list_of_necessary_patterns
+			if verbose:
+				print "---------------------------------------------------------------------------------------"
+				print "---------------------------------------------------------------------------------------"
+				print "function_1: ", func_id_1-1, "function_2:", func_id_2-1
+				print "line\top1\t\top2\t\tfunc_1 \t\t func_2\t\txor(1,2)\tand(1,xor)\tor(prev_or,and)"
+				print "---------------------------------------------------------------------------------------"
+				print "starting with list: ", list_of_necessary_patterns
 
 			or_op = "00000000"
 			for i in list_of_necessary_patterns:
 				xor_op = format(int(function_dict[i][func_id_1], 2) ^ int(function_dict[i][func_id_2], 2), 'b').zfill(8)
 				and_op = format(int(function_dict[i][func_id_2], 2) & int(xor_op, 2), 'b').zfill(8)	
 				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)
-				print str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][func_id_1], "\t", function_dict[i][func_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op)
+				if verbose:
+					print str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][func_id_1], "\t", function_dict[i][func_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op)
 			#print list_of_used_patterns
 			for i in list_of_used_patterns:
 				if i not in list_of_necessary_patterns:
@@ -160,12 +87,15 @@ for func_id_1 in range(2, len_of_list):
 						if or_op != "00000000":
 							if i not in list_of_necessary_patterns:				
 								list_of_necessary_patterns.append(i)
-								print str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][func_id_1], "\t", function_dict[i][func_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op) , "\t\tadding pattern ", i, "to final pattern list!"
+								if verbose:
+									print str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][func_id_1], "\t", function_dict[i][func_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op) , "\t\tadding pattern ", i, "to final pattern list!"
 						if or_op == "11111111":
-							print  "INFO::  reached all ones!"
+							if verbose:
+								print  "INFO::  reached all ones!"
 							break
 			if or_op != "11111111":
-				print  "INFO::  Didn't find a solution!"
+				if verbose:
+					print  "INFO::  Didn't find a solution!"
 
 			string += "\t"+str(or_op)
 			
@@ -187,7 +117,7 @@ for func_id_1 in range(2, len_of_list):
 			if verbose:		
 				print "scanning test resutls for func pair: "+str(func_id_1)+",", func_id_2, ":", scanning_test_f1_f2
 			if scanning_test_f1_f2.count("1") != len(scanning_test_f1_f2):
-				scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
+				scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
 				max_coverable_scanning = max(scanning_dict.keys())
 				if verbose:
 					print "number of missing ones:", scanning_test_f1_f2.count("0")
@@ -209,7 +139,7 @@ for func_id_1 in range(2, len_of_list):
 								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
 							list_of_necessary_patterns.append(scanning_dict[max_coverable_scanning][0])
 							scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
-							scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
+							scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
 							max_coverable_scanning = max(scanning_dict.keys())
 							if scanning_test_f1_f2.count("0") == max_coverable_scanning:
 								if scanning_dict[max_coverable_scanning][0] not in list_of_necessary_patterns:
@@ -226,8 +156,8 @@ for func_id_1 in range(2, len_of_list):
 				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
 			scanning_string += "\t"+str(scanning_test_f1_f2)
 
-	
-			print "final list of patterns:", list_of_necessary_patterns
+			if verbose:
+				print "final list of patterns:", list_of_necessary_patterns
 			for final_pattern in list_of_necessary_patterns:
 				if final_pattern not in final_set_of_patterns:
 					final_set_of_patterns.append(final_pattern)
@@ -252,9 +182,10 @@ for func_id_1 in range(2, len_of_list):
 	scanning_table_file.write(scanning_string+"\n")
 	# Print patterns and functions.. This will be used to prepare test patterns for SAF testing in turbo tester
 	# This should only be used for VLIW experiment. Modification will be needed for other processors
-	print "-----------------------------------------------------"
-	print "function_1: ",func_id_1
-	pat =[]
+	if verbose:
+		print "-----------------------------------------------------"
+		print "function_1: ",func_id_1
+
 	opcode = "{0:04b}".format((func_id_1-2))
 	#test_patterns_file.write("function_1: "+str(func_id_1)+ " "+str(opcode)+"\n")
 	for j in list_of_necessary_patterns:
@@ -273,10 +204,7 @@ saf_test_patterns_file.close()
 stop_time = time.time()
 
 
-print "final list of patterns:", list_of_used_patterns
-
 print "-----------------------------------------------------"
-print "list of possible removals for each pair of functions:"
 print "function pair", "\t", "\t", '%100s' % "usefull patterns"
 print "-------------", "\t", "\t", '%100s' % "----------------"
 counter = 1
@@ -292,25 +220,9 @@ final_unsed_patterns = []
 for item in range(1, number_of_lines+1):
 	if item not in final_set_of_patterns:
 		final_unsed_patterns.append(item)
-print "------------------------------------------"*3
-print "|"+"                                         "*3+" |"
-print "|"+"                                         "+"                RESULTS                  "+"                                         "+" |"
-print "|"+"                                         "*3+" |"
-print "------------------------------------------"*3
-print "final list of patterns used in the experiment:"
-print "number of patterns used:", len(final_set_of_patterns)
-print sorted(final_set_of_patterns)
-print "------------------------------------------"*3
-print "final list of patterns NOT used in the experiment:"
-print "number of patterns NOT used:", len(final_unsed_patterns)
-print sorted(final_unsed_patterns)
 
-print "------------------------------------------"*3
-print "|"+"                                         "+"             FAULT COVERAGE              "+"                                         "+" |"
-print "------------------------------------------"*3
-print "number of faults covered:", number_of_ones_in_experiments
-print "number of faults not covered:" , number_of_zeros_in_experiments
-print "NOTE: fault coverage =  (number of faults covered)/(number of faults covered + number of faults not covered)"
-print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
+package.print_results(final_set_of_patterns, final_unsed_patterns)
+package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
+
 print "------------------------------------------"*3
 print "program took ", str(stop_time-start_time), "seconds"

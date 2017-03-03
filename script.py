@@ -78,4 +78,4 @@ for file in sorted(results_alg_opt.keys()):
 	if "rfr_" in file:
 		rfr = True
 		file_name = file[4:]
-	print '%20s' %file_name, "\t", '%14s' %results_alg_opt[file][0], "\t", '%20s' %results_alg_opt[file][1], "\t", '%18s' %results_alg_2[file][2], "\t",'%5s' %rfr 
+	print '%20s' %file_name, "\t", '%14s' %results_alg_opt[file][0], "\t", '%20s' %results_alg_opt[file][1], "\t", '%18s' %results_alg_opt[file][2], "\t",'%5s' %rfr 

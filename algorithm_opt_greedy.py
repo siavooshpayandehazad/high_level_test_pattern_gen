@@ -94,6 +94,7 @@ for func_id_1 in range(2, len_of_list):
 	scanning_test_f1 = "00000000"
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
 	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
+	scanning_test_f1 = "00000000"
 	for func_id_2 in range(2, len_of_list):		
 		if func_id_1 != func_id_2:
 			scanning_test_f1_f2 = "00000000"
@@ -160,47 +161,6 @@ for func_id_1 in range(2, len_of_list):
 				print "best conformity solution for func ", func_id_1-1, " and func ", func_id_2-1, ": ", sufficient, best_solution
 
 
-			#-------------------------------------------------------------------------------
-			#	This part fixes the scanning test results for the current function pair
-			#-------------------------------------------------------------------------------
-
-			for scan_pattern in best_solution:
-				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
-			if verbose:		
-				print "scanning test resutls for func pair: "+str(func_id_1)+",", func_id_2, ":", scanning_test_f1_f2
-			if scanning_test_f1_f2.count("1") != len(scanning_test_f1_f2):
-				scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
-				max_coverable_scanning = max(scanning_dict.keys())
-				if verbose:
-					print "number of missing ones:", scanning_test_f1_f2.count("0")
-					print "max ones that can be covered:", max_coverable_scanning
-				if scanning_test_f1_f2.count("0") == max_coverable_scanning:
-					if scanning_dict[max_coverable_scanning][0] not in best_solution:
-						if verbose:
-							print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions for scanning test!"
-						best_solution.append(scanning_dict[max_coverable_scanning][0])
-					if verbose:
-						print "All ones!"
-				elif max_coverable_scanning == 0:
-					if verbose:
-						print "scanning test can not be improved!"
-				else:
-					while max_coverable_scanning != 0:
-						if scanning_dict[max_coverable_scanning][0] not in best_solution:
-							if verbose:
-								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
-							best_solution.append(scanning_dict[max_coverable_scanning][0])
-							scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
-							scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
-							max_coverable_scanning = max(scanning_dict.keys())
-							if scanning_test_f1_f2.count("0") == max_coverable_scanning:
-								if scanning_dict[max_coverable_scanning][0] not in best_solution:
-									if verbose:
-										print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions scanning test!"
-									best_solution.append(scanning_dict[max_coverable_scanning][0])
-								if verbose:
-									print "All ones!"
-								break
 			if verbose:
 				print "------------------------------"
 
@@ -218,8 +178,7 @@ for func_id_1 in range(2, len_of_list):
 
 			for scan_pattern in best_solution:
 				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
-			scanning_string += "\t"+str(scanning_test_f1_f2)
-
+ 
 			if redundant_function_reduction and (str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys()):
 				#print "here", func_id_1-1, func_id_2-1, sufficient, package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)]
 				number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
@@ -228,13 +187,57 @@ for func_id_1 in range(2, len_of_list):
 			number_of_ones_in_experiments  += sufficient.count("1")
 			
 		else:
-			scanning_test_f1_f2 = "xxxxxxxx"
-			scanning_string += "\t"+str(scanning_test_f1_f2)
+			scanning_test_f1_f2 = "00000000"
 			string += "\t"+"xxxxxxxx"
 	#print "SCANNING RESULT for function", func_id_1, ": ", scanning_test
+		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(8)
+		scanning_string += "\t"+str(scanning_test_f1_f2)
 
+	#-------------------------------------------------------------------------------
+	#	This part fixes the scanning test results for the current function pair
+	#-------------------------------------------------------------------------------
+	
+ 
+	if scanning_test_f1.count("1") != len(scanning_test_f1):
+		scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
+		max_coverable_scanning = max(scanning_dict.keys())
+		if verbose:
+			print "number of missing ones:", scanning_test_f1.count("0")
+			print "max ones that can be covered:", max_coverable_scanning
+		if scanning_test_f1.count("0") == max_coverable_scanning:
+			if scanning_dict[max_coverable_scanning][0] not in best_solution:
+				if verbose:
+					print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions for scanning test!"
+				best_solution.append(scanning_dict[max_coverable_scanning][0])
+				scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+			if verbose:
+				print "All ones!"
+		elif max_coverable_scanning == 0:
+			if verbose:
+				print "scanning test can not be improved!"
+		else:
+			while max_coverable_scanning != 0:
+				if scanning_dict[max_coverable_scanning][0] not in best_solution:
+					if verbose:
+						print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
+					best_solution.append(scanning_dict[max_coverable_scanning][0])
+					scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+					scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
+					max_coverable_scanning = max(scanning_dict.keys())
+					if scanning_test_f1.count("0") == max_coverable_scanning:
+						if scanning_dict[max_coverable_scanning][0] not in best_solution:
+							if verbose:
+								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions scanning test!"
+							best_solution.append(scanning_dict[max_coverable_scanning][0])
+							scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+						if verbose:
+							print "All ones!"
+						break
+
+	scanning_string += "\t"+str(scanning_test_f1)
+	scanning_table_file.write(scanning_string+"\n")					
 	table_file.write(string+"\n")
-	scanning_table_file.write(scanning_string+"\n")
+
 stop_time = time.time()
 
 table_file.close()

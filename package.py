@@ -95,13 +95,14 @@ def parse_program_arg(arguments, generated_files_folder):
 		print "-ot [file name]: spcifies the path to the generated table file" 
 		print "-ost [file name]: spcifies the path to the generated table file for scanning test" 
 		print "-op [file name]: spcifies the path to the generated patterns file" 
+		print "-rfr: redundant function reduction, if used, will use the table in package file to ingore the redundency" 
 		print "-v: makes it more verbose" 
 		print "-debug: enables debug printing"
 		print "---------------------------------------------------------------------------"
 		sys.exit()
 
 	if "-i" in arguments[1:]:
-		input_file_name= arguments[arguments.index('-i') + 1]
+		input_file_name = arguments[arguments.index('-i') + 1]
 
 	if "-v" in arguments[1:]:
 		verbose = True
@@ -114,18 +115,23 @@ def parse_program_arg(arguments, generated_files_folder):
 		debug = False
 
 	if "-ot" in arguments[1:]:
-		output_table_file_name= generated_files_folder + "/" + arguments[arguments.index('-ot') + 1]
+		output_table_file_name = generated_files_folder + "/" + arguments[arguments.index('-ot') + 1]
 	else:
-		output_table_file_name= generated_files_folder + "/" + "table.txt"
+		output_table_file_name = generated_files_folder + "/" + "table.txt"
 		
 	if "-op" in arguments[1:]:
-		output_patterns_file_name= generated_files_folder + "/" + arguments[arguments.index('-op') + 1]
+		output_patterns_file_name = generated_files_folder + "/" + arguments[arguments.index('-op') + 1]
 	else:
-		output_patterns_file_name= generated_files_folder + "/" + "patterns.txt"
+		output_patterns_file_name = generated_files_folder + "/" + "patterns.txt"
 
 	if "-ost" in arguments[1:]:
-		scanning_table_file_name= generated_files_folder + "/" + arguments[arguments.index('-ost') + 1]
+		scanning_table_file_name = generated_files_folder + "/" + arguments[arguments.index('-ost') + 1]
 	else:
-		scanning_table_file_name= generated_files_folder + "/" + "scanning_table.txt"
+		scanning_table_file_name = generated_files_folder + "/" + "scanning_table.txt"
 
-	return input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name
+	if "-rfr" in arguments[1:]:
+		redundant_function_reduction = True
+	else:
+		redundant_function_reduction = False
+
+	return input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction

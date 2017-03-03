@@ -59,7 +59,7 @@ def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patter
 			print "\tdidnt reach all ones!"
 		return or_op
 
-input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name = package.parse_program_arg(sys.argv, generated_files_folder)
+input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction = package.parse_program_arg(sys.argv, generated_files_folder)
 
 start_time = time.time()
 function_dict = {}
@@ -220,7 +220,7 @@ for func_id_1 in range(2, len_of_list):
 				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
 			scanning_string += "\t"+str(scanning_test_f1_f2)
 
-			if str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys():
+			if redundant_function_reduction and (str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys()):
 				#print "here", func_id_1-1, func_id_2-1, sufficient, package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)]
 				number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
 			elif sufficient != "00000000":

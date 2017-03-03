@@ -16,7 +16,7 @@ if "-sp" in sys.argv[1:]:
 else:
 	saf_output_patterns_file_name= generated_files_folder + "/" + "SAFpatterns.txt"
 
-input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name = package.parse_program_arg(sys.argv, generated_files_folder)
+input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction= package.parse_program_arg(sys.argv, generated_files_folder)
 
 start_time = time.time()
 function_dict = {}
@@ -101,7 +101,7 @@ for func_id_1 in range(2, len_of_list):
 			
 
 			number_of_ones_in_experiments  += or_op.count("1")
-			if str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys():
+			if redundant_function_reduction and (str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys()):
 				#print "here", func_id_1-1, func_id_2-1, or_op, package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)]
 				number_of_zeros_in_experiments  += or_op.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
 			elif or_op != "00000000":

@@ -9,6 +9,7 @@ __pycache__/
 # generated files
 
 generated_files/*
+script_outputs/*
 
 # Distribution / packaging
 .Python

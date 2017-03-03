@@ -64,6 +64,22 @@ def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patter
 			print "\tdidnt reach all ones!"
 		return or_op
 
+
+def find_most_signifacant_scanning(function_dict, function_id_1, current_covered, debug, verbose):
+	list_of_ones_in_ands = {}
+
+	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
+	if verbose:
+		print "\tcurrently covered:", current_covered
+		print "\tcurrently not covered:", not_covered
+	for i in sorted(function_dict.keys()):
+		new_ones =  format(int(not_covered, 2) & int(function_dict[i][function_id_1], 2), 'b').zfill(8) 
+		if new_ones.count("1") in list_of_ones_in_ands.keys():
+			list_of_ones_in_ands[new_ones.count("1")].append(i)
+		else:
+			list_of_ones_in_ands[new_ones.count("1")] = [i]
+	return list_of_ones_in_ands
+
 if "--help" in sys.argv[1:] or len(sys.argv[1:]) == 0:
 	print "---------------------------------------------------------------------------"
 	print "\n     Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran \n"
@@ -71,6 +87,7 @@ if "--help" in sys.argv[1:] or len(sys.argv[1:]) == 0:
 	print "program arguments:"
 	print "-i [file name]: spcifies the path to the input file" 
 	print "-ot [file name]: spcifies the path to the generated table file" 
+	print "-ost [file name]: spcifies the path to the generated table file for scanning test" 
 	print "-op [file name]: spcifies the path to the generated patterns file" 
 	print "-v: makes it more verbose" 
 	print "-debug: enables debug printing"
@@ -100,6 +117,11 @@ if "-op" in sys.argv[1:]:
 else:
 	output_patterns_file_name= generated_files_folder + "/" + "patterns.txt"
 
+if "-ost" in sys.argv[1:]:
+	scanning_table_file_name= generated_files_folder + "/" + sys.argv[sys.argv.index('-ost') + 1]
+else:
+	scanning_table_file_name= generated_files_folder + "/" + "scanning_table.txt"
+
 start_time = time.time()
 function_dict = {}
 line_counter = 0
@@ -123,6 +145,15 @@ table_file.write(string+"\n")
 string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
 table_file.write(string+"\n")
 
+
+scanning_table_file = open(scanning_table_file_name, 'w')
+string =  '%10s' %(" ")
+for function in range(2, len_of_list):
+	string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
+scanning_table_file.write(string+"\n")
+string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
+scanning_table_file.write(string+"\n")
+
 patterns_file = open(output_patterns_file_name, 'w')
 test_patterns_file = open(generated_files_folder + "/" +"testpatterns.txt", 'w')
 
@@ -131,10 +162,12 @@ number_of_zeros_in_experiments = 0
 
 final_set_of_patterns = []
 for func_id_1 in range(2, len_of_list):
-	scanning_test = "00000000"
+	scanning_test_f1 = "00000000"
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
+	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
 	for func_id_2 in range(2, len_of_list):		
 		if func_id_1 != func_id_2:
+			scanning_test_f1_f2 = "00000000"
 			list_of_used_patterns =  range(1, number_of_lines+1)
 			if verbose:
 				print "------------------------------------------"*3
@@ -170,7 +203,6 @@ for func_id_1 in range(2, len_of_list):
 						sufficient =  check_if_sufficient(function_dict, func_id_1, func_id_2, list_of_excluded_patterns+list(item), debug, verbose)
 						if sufficient.count("1") == len(sufficient):
 						 	best_solution = copy.deepcopy(list_of_excluded_patterns+list(item))
-						 	scanning_test = format(int(scanning_test, 2) | int(function_dict[item[0]][func_id_1], 2), 'b').zfill(8)
 						 	if verbose:
 							 	print "\twe got it!"
 						 	break_the_loop = True
@@ -196,7 +228,54 @@ for func_id_1 in range(2, len_of_list):
 				if verbose:
 					print "\t------------------------------------------------------------------"
 			if verbose:
-				print "best_solution for func ", func_id_1-1, " and func ", func_id_2-1, ": ", sufficient, best_solution
+				print "best conformity solution for func ", func_id_1-1, " and func ", func_id_2-1, ": ", sufficient, best_solution
+
+
+			#-------------------------------------------------------------------------------
+			#	This part fixes the scanning test results for the current function pair
+			#-------------------------------------------------------------------------------
+
+			for scan_pattern in best_solution:
+				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
+			if verbose:		
+				print "scanning test resutls for func pair: "+str(func_id_1)+",", func_id_2, ":", scanning_test_f1_f2
+			if scanning_test_f1_f2.count("1") != len(scanning_test_f1_f2):
+				scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
+				max_coverable_scanning = max(scanning_dict.keys())
+				if verbose:
+					print "number of missing ones:", scanning_test_f1_f2.count("0")
+					print "max ones that can be covered:", max_coverable_scanning
+				if scanning_test_f1_f2.count("0") == max_coverable_scanning:
+					if scanning_dict[max_coverable_scanning][0] not in best_solution:
+						if verbose:
+							print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions for scanning test!"
+						best_solution.append(scanning_dict[max_coverable_scanning][0])
+					if verbose:
+						print "All ones!"
+				elif max_coverable_scanning == 0:
+					if verbose:
+						print "scanning test can not be improved!"
+				else:
+					while max_coverable_scanning != 0:
+						if scanning_dict[max_coverable_scanning][0] not in best_solution:
+							if verbose:
+								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
+							best_solution.append(scanning_dict[max_coverable_scanning][0])
+							scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+							scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1_f2, debug, verbose)
+							max_coverable_scanning = max(scanning_dict.keys())
+							if scanning_test_f1_f2.count("0") == max_coverable_scanning:
+								if scanning_dict[max_coverable_scanning][0] not in best_solution:
+									if verbose:
+										print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions scanning test!"
+									best_solution.append(scanning_dict[max_coverable_scanning][0])
+								if verbose:
+									print "All ones!"
+								break
+			if verbose:
+				print "------------------------------"
+
+
 			for final_pattern in best_solution:
 				if final_pattern not in final_set_of_patterns:
 					final_set_of_patterns.append(final_pattern)
@@ -209,6 +288,10 @@ for func_id_1 in range(2, len_of_list):
 				
 			string += "\t"+str(sufficient)
 
+			for scan_pattern in best_solution:
+				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
+			scanning_string += "\t"+str(scanning_test_f1_f2)
+
 			if str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys():
 				#print "here", func_id_1-1, func_id_2-1, sufficient, package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)]
 				number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
@@ -217,12 +300,17 @@ for func_id_1 in range(2, len_of_list):
 			number_of_ones_in_experiments  += sufficient.count("1")
 			
 		else:
+			scanning_test_f1_f2 = "xxxxxxxx"
+			scanning_string += "\t"+str(scanning_test_f1_f2)
 			string += "\t"+"xxxxxxxx"
-	print "SCANNING RESULT for function", func_id_1, ": ", scanning_test
+	#print "SCANNING RESULT for function", func_id_1, ": ", scanning_test
+
 	table_file.write(string+"\n")
+	scanning_table_file.write(scanning_string+"\n")
 stop_time = time.time()
 
 table_file.close()
+scanning_table_file.close()
 patterns_file.close()
 final_unsed_patterns = []
 for item in range(1, number_of_lines+1):

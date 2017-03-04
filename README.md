@@ -1,4 +1,4 @@
-# high_level_test_pattern_gen
+# high level test pattern gen
 welcome! 
 
 ---------

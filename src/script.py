@@ -150,7 +150,7 @@ for plot in list_of_plots:
 	else:
 		plt.legend(fontsize = 10, loc='lower right')
 
-	figure_name = script_folder
+	figure_name = script_folder+"/"
 	split_plot_name = plot.split()
 	for j in split_plot_name:
 		if split_plot_name.index(j)!= len(split_plot_name)-1:

@@ -121,7 +121,11 @@ for plot in list_of_plots:
 	plt.plot((0, x[y_opt.index(max(y_opt))]), (max(y_opt), max(y_opt)), 'y--')
 	plt.plot((0, x[y.index(max(y))]), (max(y), max(y)), 'y--')
 
-	plt.ylabel(plot)
+	if plot == "time taken":
+		plt.ylabel(plot+"(s)")
+	else:
+		plt.ylabel(plot)
+
 	plt.xlabel("Search Space(number of initial patterns)")
 	if plot == "time taken":
 		plt.legend(fontsize = 10, loc='upper left')

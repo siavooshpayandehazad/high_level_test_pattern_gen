@@ -51,10 +51,11 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 						if "number of patterns used:" in line:
 							num_of_patterns = line.split()[4]
 				results_alg[file_name] = [FC, time, num_of_patterns]
-				
-			copyfile("generated_files/"+table_file, script_folder+table_file)
-			copyfile("generated_files/"+pattern_file, script_folder+pattern_file)
-			copyfile("generated_files/"+ost_file, script_folder+ost_file)
+			
+			# copying files from generated files folder to script output folder
+			for file_to_copy in [table_file, pattern_file, ost_file]: 
+				copyfile("generated_files/"+file_to_copy, script_folder+file_to_copy)
+	
 			if algorithm == "algorithm_2":
 				copyfile("generated_files/SAFpatterns.txt", script_folder+SAF_file)
 				

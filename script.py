@@ -28,6 +28,7 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 			table_file = "table"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
 			pattern_file = "pattern"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
 			ost_file = "ost"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
+			SAF_file = "SAF"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
 			
 			command = "python "+algorithm+".py"+" -i "+str(input_file_path+file) +" -ot "+ table_file+" -op "+ pattern_file+" -ost "+ost_file
 			file_name = file
@@ -54,6 +55,9 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 			copyfile("generated_files/"+table_file, script_folder+table_file)
 			copyfile("generated_files/"+pattern_file, script_folder+pattern_file)
 			copyfile("generated_files/"+ost_file, script_folder+ost_file)
+			if algorithm == "algorithm_2":
+				copyfile("generated_files/SAFpatterns.txt", script_folder+SAF_file)
+				
 
 
 print "---------------------------"

@@ -3,6 +3,11 @@ from shutil import copyfile
 import matplotlib.pyplot as plt
 import re, copy
 
+# This script goes through the files in patterns folder and runs them with both 
+# algorithms and with and without redundant function reduction!
+# The results would be copied to script_outputs folder and comparison graphs would also
+# be saved in the same folder!
+
 input_file_path = "patterns/"
 file_list = [file for file in os.listdir(input_file_path)]
 FC = 0
@@ -17,18 +22,16 @@ if os.path.exists(script_folder):
 else:
 	os.mkdir(script_folder)
 
-
-
 results_alg = {}
 for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 	for rfr in [False, True]:
 		for file in file_list:
 			
-
-			table_file = "table"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
-			pattern_file = "pattern"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
-			ost_file = "ost"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
-			SAF_file = "SAF"+("_opt" if "opt" in algorithm else "")+ ("_rfr" if rfr else "")+"_"+file
+			end_of_file_name = ("_opt" if "opt" in algorithm else "") + ("_rfr" if rfr else "")+"_"+file
+			table_file = "table" + end_of_file_name
+			pattern_file = "pattern" + end_of_file_name
+			ost_file = "ost" + end_of_file_name
+			SAF_file = "SAF" + end_of_file_name
 			
 			command = "python "+algorithm+".py"+" -i "+str(input_file_path+file) +" -ot "+ table_file+" -op "+ pattern_file+" -ost "+ost_file
 			file_name = file
@@ -38,6 +41,7 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 				command += " -rfr"
 				file_name = "rfr_"+file_name
 			os.system(command)
+
 			with open("Console.log") as f:
 				FC = 0
 				time = 0
@@ -53,13 +57,12 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 				results_alg[file_name] = [FC, time, num_of_patterns]
 			
 			# copying files from generated files folder to script output folder
+			#TODO: after fixing SAF for the opt version, this list should be updated!
 			for file_to_copy in [table_file, pattern_file, ost_file]: 
 				copyfile("generated_files/"+file_to_copy, script_folder+file_to_copy)
 	
 			if algorithm == "algorithm_2":
 				copyfile("generated_files/SAFpatterns.txt", script_folder+SAF_file)
-				
-
 
 print "---------------------------"
 print "algorithms results:"  
@@ -100,6 +103,7 @@ for plot in list_of_plots:
 		if "opt_" not in file and "rfr_" not in file:
 			y.append(float(results_alg[file][index]))
 
+	# the data in the lists should be sorted first!
 	temp_y_opt_rfr = []
 	temp_y_rfr = []
 	temp_y_opt = []
@@ -115,23 +119,27 @@ for plot in list_of_plots:
 	y_rfr = copy.deepcopy(temp_y_rfr)
 	y_opt = copy.deepcopy(temp_y_opt)
 	y = copy.deepcopy(temp_y)
+
+	# plotting the data!
 	plt.plot(x, y_opt_rfr, ".-r", label="opt, rfr")
 	plt.plot(x, y_rfr, "--b",  label="no opt, rfr") 
 	plt.plot(x, y_opt, ".-g", label="opt, no rfr") 
 	plt.plot(x, y, "--c", label="no opt, no rfr")
+
 	# here we mark the maximum values of each 
-	
 	plt.plot((0, x[y_opt_rfr.index(max(y_opt_rfr))]), (max(y_opt_rfr), max(y_opt_rfr)), 'y--')
 	plt.plot((0, x[y_rfr.index(max(y_rfr))]), (max(y_rfr), max(y_rfr)), 'y--')
 	plt.plot((0, x[y_opt.index(max(y_opt))]), (max(y_opt), max(y_opt)), 'y--')
 	plt.plot((0, x[y.index(max(y))]), (max(y), max(y)), 'y--')
 
+	# adding lables!
+	plt.xlabel("Search Space(number of initial patterns)")
 	if plot == "time taken":
 		plt.ylabel(plot+"(s)")
 	else:
 		plt.ylabel(plot)
 
-	plt.xlabel("Search Space(number of initial patterns)")
+	# adding legend!
 	if plot == "time taken":
 		plt.legend(fontsize = 10, loc='upper left')
 	else:
@@ -146,4 +154,3 @@ for plot in list_of_plots:
 			figure_name += j +".jpg"
 	plt.savefig(figure_name)
 	plt.close()
-

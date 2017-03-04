@@ -6,12 +6,10 @@ import copy
 import time
 import package
 
-sys.stdout = Logger.Logger()
-
-generated_files_folder = "generated_files"
+generated_files_folder = "../generated_files"
 
 package.generate_folders(generated_files_folder)
-
+sys.stdout = Logger.Logger(generated_files_folder)
 
 if "-sp" in sys.argv[1:]:
 	saf_output_patterns_file_name= generated_files_folder + "/" +"SAF"+ sys.argv[sys.argv.index('-sp') + 1]

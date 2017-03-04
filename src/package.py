@@ -30,6 +30,7 @@ related_functions = { "10_11" : "10000000",  	# SHR, ASR
 					  "11_5"  : "01111111",		# ASR, ANd
 }
 
+
 def generate_folders(generated_files_folder):
 	"""
 	This function checkes if the generated_files_folder exists, if so, it removes all the files in it

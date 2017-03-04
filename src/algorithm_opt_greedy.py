@@ -7,10 +7,10 @@ import itertools
 import time
 import package
 
-sys.stdout = Logger.Logger()
-generated_files_folder = "generated_files"
-
+generated_files_folder = "../generated_files"
 package.generate_folders(generated_files_folder)
+sys.stdout = Logger.Logger(generated_files_folder)
+
 
 
 def find_most_signifacant(function_dict, function_id_1, function_id_2, list_of_used_patterns, list_of_excluded_patterns, current_covered, debug, verbose):

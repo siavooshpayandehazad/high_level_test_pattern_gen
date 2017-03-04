@@ -9,11 +9,11 @@ class Logger(object):
     """
     This Class is for redirecting the console messages to a log file...
     """
-    def __init__(self):
-        if os.path.exists('Console.log'):
-            os.remove('Console.log')
+    def __init__(self, generated_files_folder):
+        if os.path.exists(generated_files_folder+'/Console.log'):
+            os.remove(generated_files_folder+'/Console.log')
         self.terminal = sys.stdout
-        self.log = open('Console.log', "a")
+        self.log = open(generated_files_folder+'/Console.log', "a")
 
     def write(self, message):
         self.terminal.write(message)

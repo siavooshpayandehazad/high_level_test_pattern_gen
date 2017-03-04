@@ -10,17 +10,20 @@ import re, copy
 # The results would be copied to script_outputs folder and comparison graphs would also
 # be saved in the same folder!
 
-input_file_path = "patterns/"
+input_file_path = "../patterns"
+generated_files_folder = "../generated_files"
+script_folder = "../script_outputs"
+
 file_list = [file for file in os.listdir(input_file_path)]
 FC = 0
 time = 0
 num_of_patterns = 0
 
-script_folder = "script_outputs/"
+
 if os.path.exists(script_folder):
 	files = [file for file in os.listdir(script_folder)]
 	for file in files:
-		os.remove(script_folder+file)
+		os.remove(script_folder+"/"+file)
 else:
 	os.mkdir(script_folder)
 
@@ -35,7 +38,7 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 			ost_file = "ost" + end_of_file_name
 			SAF_file = "SAF" + end_of_file_name
 			
-			command = "python "+algorithm+".py"+" -i "+str(input_file_path+file) +" -ot "+ table_file+" -op "+ pattern_file+" -ost "+ost_file
+			command = "python "+algorithm+".py"+" -i "+str(input_file_path+"/"+file) +" -ot "+ table_file+" -op "+ pattern_file+" -ost "+ost_file
 			file_name = file
 			if "opt" in algorithm:
 				file_name = "opt_"+file_name
@@ -44,7 +47,7 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 				file_name = "rfr_"+file_name
 			os.system(command)
 
-			with open("Console.log") as f:
+			with open("../generated_files/Console.log") as f:
 				FC = 0
 				time = 0
 				num_of_patterns = 0
@@ -61,10 +64,10 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy"]:
 			# copying files from generated files folder to script output folder
 			#TODO: after fixing SAF for the opt version, this list should be updated!
 			for file_to_copy in [table_file, pattern_file, ost_file]: 
-				copyfile("generated_files/"+file_to_copy, script_folder+file_to_copy)
+				copyfile(generated_files_folder+"/"+file_to_copy, script_folder+"/"+file_to_copy)
 	
 			if algorithm == "algorithm_2":
-				copyfile("generated_files/SAFpatterns.txt", script_folder+SAF_file)
+				copyfile(generated_files_folder+"/"+"SAFpatterns.txt", script_folder+"/"+SAF_file)
 
 print "---------------------------"
 print "algorithms results:"  

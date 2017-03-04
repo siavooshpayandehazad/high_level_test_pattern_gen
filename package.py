@@ -1,3 +1,5 @@
+# Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran
+
 import sys, os
 # in this dictionary we describe untestable points between related functions!
 
@@ -19,7 +21,8 @@ related_functions = { "10_11" : "10000000",  	# SHR, ASR
 					  "6_2"   : "11111110",		# OR, ADD
 					  "6_3"   : "11111110",		# OR, SUB
 					  "6_11"  : "01111111",		# OR, ASR
-					  # "6_12"  : "01111111",	# OR, INC ?? 
+					  # functions 6 adn 12 are not related! 
+					  # "6_12"  : "01111111",	# OR, INC ?? 	
 					  "11_14"  : "01111111",	# ASR, RLC
 					  "11_15"  : "01111111",	# ASR, RRC
 					  "14_11"  : "01111111",	# ASR, RLC

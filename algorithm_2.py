@@ -1,3 +1,5 @@
+# Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran
+
 import Logger
 import sys
 import copy

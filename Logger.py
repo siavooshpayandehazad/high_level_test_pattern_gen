@@ -1,4 +1,5 @@
-# Copyright (C) 2015 Siavoosh Payandeh Azad 
+# Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran
+
 import sys
 import os
 import time

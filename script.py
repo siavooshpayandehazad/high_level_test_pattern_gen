@@ -1,3 +1,5 @@
+# Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran
+
 import os
 from shutil import copyfile
 import matplotlib.pyplot as plt

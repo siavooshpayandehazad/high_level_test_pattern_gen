@@ -1,5 +1,7 @@
 import os
 from shutil import copyfile
+import matplotlib.pyplot as plt
+import re, copy
 
 input_file_path = "patterns/"
 file_list = [file for file in os.listdir(input_file_path)]
@@ -72,3 +74,47 @@ for file in sorted(results_alg.keys()):
 	file_name = file[pointer:]
 
 	print '%20s' %file_name, "\t", '%14s' %results_alg[file][0], "\t", '%20s' %results_alg[file][1], "\t",'%18s' %results_alg[file][2], "\t",'%5s' %rfr , "\t",'%5s' %opt 
+
+list_of_plots = ["fault coverage", "time taken","number of patterns"]
+for plot in list_of_plots:
+	index = list_of_plots.index(plot)
+	x = []
+	y_opt_rfr = []
+	y_opt = []
+	y_rfr = []
+	y = []
+	for file in sorted(results_alg.keys()):
+		number = re.findall('\d+', file)
+		x.append(int(number[0]))
+		if "opt_" in file and "rfr_" in file:
+			y_opt_rfr.append(float(results_alg[file][index]))
+		if "opt_" not in file and "rfr_" in file:
+			y_rfr.append(float(results_alg[file][index]))
+		if "opt_" in file and "rfr_" not in file:
+			y_opt.append(float(results_alg[file][index]))
+		if "opt_" not in file and "rfr_" not in file:
+			y.append(float(results_alg[file][index]))
+
+	temp_y_opt_rfr = []
+	temp_y_rfr = []
+	temp_y_opt = []
+	temp_y = []
+	for item in sorted(x):
+		temp_y_opt_rfr.append(y_opt_rfr[x.index(item)])
+		temp_y_rfr.append(y_rfr[x.index(item)])
+		temp_y_opt.append(y_opt[x.index(item)])
+		temp_y.append(y[x.index(item)])
+
+	x = copy.deepcopy(sorted(x))
+	y_opt_rfr = copy.deepcopy(temp_y_opt_rfr)
+	y_rfr = copy.deepcopy(temp_y_rfr)
+	y_opt = copy.deepcopy(temp_y_opt)
+	y = copy.deepcopy(temp_y)
+	plt.plot(x, y_opt_rfr, ".-r", label="opt, rfr")
+	plt.plot(x, y_rfr, "--b",  label="no opt, rfr") 
+	plt.plot(x, y_opt, ".-g", label="opt, no rfr") 
+	plt.plot(x, y, "--c", label="no opt, no rfr")
+	plt.ylabel(plot)
+	plt.legend(fontsize = 10, loc='lower right')
+	plt.show()
+

@@ -64,17 +64,8 @@ def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patter
 input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction = package.parse_program_arg(sys.argv, generated_files_folder)
 
 start_time = time.time()
-function_dict = {}
-line_counter = 0
-with open(input_file_name) as f:
-	for line in f:
-		if line != "":
-			line_counter += 1
-			list_of_functions =  line.split(" ")
-			list_of_functions[len(list_of_functions)-1] = list_of_functions[len(list_of_functions)-1][:-2]
-			function_dict[line_counter] = list_of_functions[1:]
-			sorted_keys = sorted(function_dict.keys())
 
+function_dict = copy.deepcopy(package.parse_input_pattern_file(input_file_name))
 len_of_list = len(function_dict[function_dict.keys()[0]])
 number_of_lines = len(function_dict.keys())
 

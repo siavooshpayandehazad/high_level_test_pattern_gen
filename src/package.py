@@ -30,6 +30,17 @@ related_functions = { "10_11" : "10000000",  	# SHR, ASR
 					  "11_5"  : "01111111",		# ASR, ANd
 }
 
+def parse_input_pattern_file(input_file_name):
+	function_dict = {}
+	line_counter = 0
+	with open(input_file_name) as f:
+		for line in f:
+			if line != "":
+				line_counter += 1
+				list_of_functions =  line.split(" ")
+				list_of_functions[len(list_of_functions)-1] = list_of_functions[len(list_of_functions)-1][:-2]
+				function_dict[line_counter] = list_of_functions[1:]
+	return function_dict
 
 def generate_folders(generated_files_folder):
 	"""

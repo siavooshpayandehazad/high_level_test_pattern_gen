@@ -14,7 +14,13 @@ input_file_path = "../patterns"
 generated_files_folder = "../generated_files"
 script_folder = "../script_outputs"
 
-file_list = [file for file in os.listdir(input_file_path)]
+tmp_file_list = [tmp_file for tmp_file in os.listdir(input_file_path+"/")]
+file_list =[]
+for file in tmp_file_list:
+	if ".txt" in file:
+		file_list.append(file)
+print "list of files to be processed:", file_list
+
 FC = 0
 time = 0
 num_of_patterns = 0

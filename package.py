@@ -28,17 +28,30 @@ related_functions = { "10_11" : "10000000",  	# SHR, ASR
 }
 
 def generate_folders(generated_files_folder):
+	"""
+	This function checkes if the generated_files_folder exists, if so, it removes all the files in it
+	if not, it generates the folder
+	generated_files_folder: string : path to the generated files folder
+	returns: None
+	"""
 	if os.path.exists(generated_files_folder):
 		file_list = [file for file in os.listdir(generated_files_folder)]
 		for file in file_list:
 			os.remove(generated_files_folder+'/'+file)
 	else:
 	    os.mkdir(generated_files_folder)
+	return None
 
 def make_table_header(table_file, len_of_list):
+	"""
+	writes the header for the table files
+	table_file: table file, should be open!
+	len_of_list: represents the number of functions in the experiment
+	returns: None
+	"""
 	string =  '%10s' %(" ")
-	for function in range(2, len_of_list):
-		string += "\t"+'%8s' %("f_"+str(function-1)) # -1 to march the number of functions for readability
+	for function in range(1, len_of_list-1):
+		string += "\t"+'%8s' %("f_"+str(function)) # -1 to march the number of functions for readability
 	table_file.write(string+"\n")
 	string = '%10s' %(" ")+ "\t" + "------------"*(len_of_list-2)
 	table_file.write(string+"\n")
@@ -83,7 +96,6 @@ def print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_
 	print "number of faults not covered:" , number_of_zeros_in_experiments
 	print "NOTE: fault coverage =  (number of faults covered)/(number of faults covered + number of faults not covered)"
 	print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
-
 
 def parse_program_arg(arguments, generated_files_folder):
 	if "--help" in arguments[1:] or len(arguments[1:]) == 0:

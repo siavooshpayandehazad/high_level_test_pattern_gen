@@ -76,15 +76,17 @@ with open(input_file_name) as f:
 len_of_list = len(function_dict[function_dict.keys()[0]])
 number_of_lines = len(function_dict.keys())
 
-table_file = open(output_table_file_name, 'w')
-scanning_table_file = open(scanning_table_file_name, 'w')
+try:
+    table_file = open(output_table_file_name, 'w')
+	scanning_table_file = open(scanning_table_file_name, 'w')
+	patterns_file = open(output_patterns_file_name, 'w')
+	test_patterns_file = open(generated_files_folder + "/" +"testpatterns.txt", 'w')
+except IOError:
+    print "Could not open input pattern file, test pattern file, conformity or scanning table file!"
+    sys.exit()
 
 package.make_table_header(table_file, len_of_list)
 package.make_table_header(scanning_table_file, len_of_list)
-
-
-patterns_file = open(output_patterns_file_name, 'w')
-test_patterns_file = open(generated_files_folder + "/" +"testpatterns.txt", 'w')
 
 number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
@@ -197,7 +199,6 @@ for func_id_1 in range(2, len_of_list):
 	#	This part fixes the scanning test results for the current function pair
 	#-------------------------------------------------------------------------------
 	
- 
 	if scanning_test_f1.count("1") != len(scanning_test_f1):
 		scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
 		max_coverable_scanning = max(scanning_dict.keys())
@@ -240,28 +241,23 @@ for func_id_1 in range(2, len_of_list):
 
 stop_time = time.time()
 
-table_file.close()
-scanning_table_file.close()
-patterns_file.close()
 final_unsed_patterns = []
 for item in range(1, number_of_lines+1):
 	if item not in final_set_of_patterns:
 		final_unsed_patterns.append(item)
 
-package.print_results(final_set_of_patterns, final_unsed_patterns)
-
-
-if verbose:
-	print "------------------------------------------"*3 
-	print "final list of patterns"
 for item in sorted(final_set_of_patterns):
-		test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
-		if verbose:
-			print str(function_dict[item][0])+"    "+str(function_dict[item][1])
-		
+	test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
+
+# reports!
+package.print_results(final_set_of_patterns, final_unsed_patterns)
 package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 
 print "------------------------------------------"*3
 print "program took ", str(stop_time-start_time), "seconds"
 
+# closing all files
+table_file.close()
+scanning_table_file.close()
+patterns_file.close()
 test_patterns_file.close()

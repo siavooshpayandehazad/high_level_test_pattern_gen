@@ -116,5 +116,14 @@ for plot in list_of_plots:
 	plt.plot(x, y, "--c", label="no opt, no rfr")
 	plt.ylabel(plot)
 	plt.legend(fontsize = 10, loc='lower right')
-	plt.show()
+
+	figure_name = script_folder
+	split_plot_name = plot.split()
+	for j in split_plot_name:
+		if split_plot_name.index(j)!= len(split_plot_name)-1:
+			figure_name += j + "_"
+		else:
+			figure_name += j +".jpg"
+	plt.savefig(figure_name)
+	plt.close()
 

@@ -72,7 +72,7 @@ def find_most_signifacant_scanning(function_dict, function_id_1, current_covered
 			list_of_ones_in_ands[new_ones.count("1")] = [i]
 	return list_of_ones_in_ands
 
-def print_results(final_set_of_patterns, final_unsed_patterns):
+def print_results(final_set_of_patterns, final_unsed_patterns, verbose):
 	print "------------------------------------------"*3
 	print "|"+"                                         "*3+" |"
 	print "|"+"                                         "+"                RESULTS                  "+"                                         "+" |"
@@ -81,11 +81,12 @@ def print_results(final_set_of_patterns, final_unsed_patterns):
 	print "final list of patterns used in the experiment:"
 	print "number of patterns used:", len(final_set_of_patterns)
 	print sorted(final_set_of_patterns)
-
-	#print "------------------------------------------"*3
-	#print "final list of patterns NOT used in the experiment:"
-	#print "number of patterns NOT used:", len(final_unsed_patterns)
-	#print sorted(final_unsed_patterns)
+	if verbose:
+		print "------------------------------------------"*3
+		print "final list of patterns NOT used in the experiment:"
+		print "number of patterns NOT used:", len(final_unsed_patterns)
+		print sorted(final_unsed_patterns)
+	return None
 
 def print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments):
 	print "------------------------------------------"*3
@@ -96,6 +97,7 @@ def print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_
 	print "number of faults not covered:" , number_of_zeros_in_experiments
 	print "NOTE: fault coverage =  (number of faults covered)/(number of faults covered + number of faults not covered)"
 	print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
+	return None
 
 def parse_program_arg(arguments, generated_files_folder):
 	if "--help" in arguments[1:] or len(arguments[1:]) == 0:

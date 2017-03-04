@@ -122,13 +122,13 @@ for func_id_1 in range(2, len_of_list):
 			#print "final list of unused patterns:", list_of_pattens_to_delete
 			deletion_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(list_of_pattens_to_delete)
 			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(list_of_necessary_patterns)
-			#if len(list_of_pattens_to_delete)>0 and len(list_of_necessary_patterns)>0: 
-			#	for item in list_of_pattens_to_delete:
-			#		if item < max(list_of_necessary_patterns):
-			#			if item in list_of_used_patterns:
-			#				if item not in list_of_necessary_patterns:
-			#					list_of_used_patterns.remove(item) 
-			#					#print "removed pattern no:", item
+			# if len(list_of_pattens_to_delete)>0 and len(list_of_necessary_patterns)>0: 
+			# 	for item in list_of_pattens_to_delete:
+			# 		if item < max(list_of_necessary_patterns):
+			# 			if item in list_of_used_patterns:
+			# 				if item not in list_of_necessary_patterns:
+			# 					list_of_used_patterns.remove(item) 
+			# 					#print "removed pattern no:", item
 
 		else:
 			string += "\t"+"xxxxxxxx"
@@ -136,13 +136,9 @@ for func_id_1 in range(2, len_of_list):
 		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(8)
 		scanning_string += "\t"+str(scanning_test_f1_f2)
 
-	
-
 	#-------------------------------------------------------------------------------
 	#	This part fixes the scanning test results for the current function pair
 	#-------------------------------------------------------------------------------
-	
- 
 	if scanning_test_f1.count("1") != len(scanning_test_f1):
 		scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
 		max_coverable_scanning = max(scanning_dict.keys())
@@ -190,11 +186,11 @@ for func_id_1 in range(2, len_of_list):
 		print "function_1: ",func_id_1
 
 	opcode = "{0:04b}".format((func_id_1-2))
-	#test_patterns_file.write("function_1: "+str(func_id_1)+ " "+str(opcode)+"\n")
+	# test_patterns_file.write("function_1: "+str(func_id_1)+ " "+str(opcode)+"\n")
 	for j in list_of_necessary_patterns:
-		#test_patterns_file.write(str(j)+"\t"+function_dict[j][0]+"\t"+function_dict[j][1]+"\n")
+		# test_patterns_file.write(str(j)+"\t"+function_dict[j][0]+"\t"+function_dict[j][1]+"\n")
 		saf_test_patterns_file.write(function_dict[j][0]+function_dict[j][1]+opcode+"\n")
-	#test_patterns_file.write("\n")
+	# test_patterns_file.write("\n")
 
 # final set of patterns	
 for k in final_set_of_patterns:
@@ -224,7 +220,7 @@ for item in range(1, number_of_lines+1):
 	if item not in final_set_of_patterns:
 		final_unsed_patterns.append(item)
 
-package.print_results(final_set_of_patterns, final_unsed_patterns)
+package.print_results(final_set_of_patterns, final_unsed_patterns, verbose)
 package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 
 print "------------------------------------------"*3

@@ -77,7 +77,7 @@ len_of_list = len(function_dict[function_dict.keys()[0]])
 number_of_lines = len(function_dict.keys())
 
 try:
-    table_file = open(output_table_file_name, 'w')
+	table_file = open(output_table_file_name, 'w')
 	scanning_table_file = open(scanning_table_file_name, 'w')
 	patterns_file = open(output_patterns_file_name, 'w')
 	test_patterns_file = open(generated_files_folder + "/" +"testpatterns.txt", 'w')
@@ -250,7 +250,7 @@ for item in sorted(final_set_of_patterns):
 	test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
 
 # reports!
-package.print_results(final_set_of_patterns, final_unsed_patterns)
+package.print_results(final_set_of_patterns, final_unsed_patterns, verbose)
 package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 
 print "------------------------------------------"*3

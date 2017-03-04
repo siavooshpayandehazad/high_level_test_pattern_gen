@@ -114,8 +114,19 @@ for plot in list_of_plots:
 	plt.plot(x, y_rfr, "--b",  label="no opt, rfr") 
 	plt.plot(x, y_opt, ".-g", label="opt, no rfr") 
 	plt.plot(x, y, "--c", label="no opt, no rfr")
+	# here we mark the maximum values of each 
+	
+	plt.plot((0, x[y_opt_rfr.index(max(y_opt_rfr))]), (max(y_opt_rfr), max(y_opt_rfr)), 'y--')
+	plt.plot((0, x[y_rfr.index(max(y_rfr))]), (max(y_rfr), max(y_rfr)), 'y--')
+	plt.plot((0, x[y_opt.index(max(y_opt))]), (max(y_opt), max(y_opt)), 'y--')
+	plt.plot((0, x[y.index(max(y))]), (max(y), max(y)), 'y--')
+
 	plt.ylabel(plot)
-	plt.legend(fontsize = 10, loc='lower right')
+	plt.xlabel("Search Space(number of initial patterns)")
+	if plot == "time taken":
+		plt.legend(fontsize = 10, loc='upper left')
+	else:
+		plt.legend(fontsize = 10, loc='lower right')
 
 	figure_name = script_folder
 	split_plot_name = plot.split()

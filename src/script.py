@@ -19,7 +19,12 @@ file_list =[]
 for file in tmp_file_list:
 	if ".txt" in file:
 		file_list.append(file)
+
+print "--------------------------"*3
+print "This script runs both algorithms for all the patterns in \"patterns\" folder and saves the results"
+print "in \"script_outputs\" folder!"
 print "list of files to be processed:", file_list
+print "--------------------------"*3
 
 FC = 0
 time = 0

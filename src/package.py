@@ -134,6 +134,18 @@ def print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_
 	print "fault coverage :", "{:1.2f}".format(100*float(number_of_ones_in_experiments)/(number_of_ones_in_experiments+number_of_zeros_in_experiments)),"%"
 	return None
 
+def report_usefull_patterns_per_round(used_dic, len_of_list):
+	print "-----------------------------------------------------"
+	print "function pair", "\t", "\t", '%100s' % "usefull patterns"
+	print "-------------", "\t", "\t", '%100s' % "----------------"
+	counter = 1
+	for item in sorted(used_dic.keys()):
+		print '%10s' %str(int(item.split("_")[0])-1)+"_"+str(int(item.split("_")[1])-1), "\t",'%100s' %used_dic[item]
+		counter += 1
+		if counter == len_of_list-2:
+			print "------------------------------------------------------------"*2
+			counter = 1
+
 def parse_program_arg(arguments, generated_files_folder):
 	if "--help" in arguments[1:] or len(arguments[1:]) == 0:
 		print "---------------------------------------------------------------------------"

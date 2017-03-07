@@ -72,8 +72,7 @@ number_of_lines = len(function_dict.keys())
 try:
 	table_file = open(output_table_file_name, 'w')
 	scanning_table_file = open(scanning_table_file_name, 'w')
-	patterns_file = open(output_patterns_file_name, 'w')
-	test_patterns_file = open(generated_files_folder + "/" +"testpatterns.txt", 'w')
+	test_patterns_file = open(output_patterns_file_name, 'w')
 except IOError:
     print "Could not open input pattern file, test pattern file, conformity or scanning table file!"
     sys.exit()
@@ -83,8 +82,9 @@ package.make_table_header(scanning_table_file, len_of_list)
 
 number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
-
+used_dic = {}
 final_set_of_patterns = []
+
 for func_id_1 in range(2, len_of_list):
 	scanning_test_f1 = "00000000"
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
@@ -155,6 +155,7 @@ for func_id_1 in range(2, len_of_list):
 			if verbose:
 				print "best conformity solution for func ", func_id_1-1, " and func ", func_id_2-1, ": ", sufficient, best_solution
 
+			
 
 			if verbose:
 				print "------------------------------"
@@ -162,12 +163,7 @@ for func_id_1 in range(2, len_of_list):
 			for final_pattern in best_solution:
 				if final_pattern not in final_set_of_patterns:
 					final_set_of_patterns.append(final_pattern)
-			patterns_file.write("--------------------------------\n")
-			patterns_file.write("Pattern No\t"+'%8s'%("f_"+str(func_id_1))+"    "+"f_"+str(func_id_2)+"\n")
-			patterns_file.write("---------\n")
-		
-			for item in best_solution:
-				patterns_file.write('%10s' %str(item)+"\t"+str(function_dict[item][0])+"    "+str(function_dict[item][1])+"\n")
+			 
 				
 			string += "\t"+str(sufficient)
 
@@ -181,9 +177,11 @@ for func_id_1 in range(2, len_of_list):
 				number_of_zeros_in_experiments  += sufficient.count("0")
 			number_of_ones_in_experiments  += sufficient.count("1")
 			
+			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(final_set_of_patterns)
 		else:
 			scanning_test_f1_f2 = "00000000"
 			string += "\t"+"xxxxxxxx"
+
 	#print "SCANNING RESULT for function", func_id_1, ": ", scanning_test
 		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(8)
 		scanning_string += "\t"+str(scanning_test_f1_f2)
@@ -232,6 +230,8 @@ for func_id_1 in range(2, len_of_list):
 	scanning_table_file.write(scanning_string+"\n")					
 	table_file.write(string+"\n")
 
+ 
+
 stop_time = time.time()
 
 final_unsed_patterns = []
@@ -243,6 +243,7 @@ for item in sorted(final_set_of_patterns):
 	test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
 
 # reports!
+package.report_usefull_patterns_per_round(used_dic, len_of_list)
 package.print_results(final_set_of_patterns, final_unsed_patterns, verbose)
 package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 
@@ -252,5 +253,4 @@ print "program took ", str(stop_time-start_time), "seconds"
 # closing all files
 table_file.close()
 scanning_table_file.close()
-patterns_file.close()
 test_patterns_file.close()

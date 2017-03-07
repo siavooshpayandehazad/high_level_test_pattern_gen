@@ -193,18 +193,7 @@ test_patterns_file.close()
 saf_test_patterns_file.close()
 stop_time = time.time()
 
-
-print "-----------------------------------------------------"
-print "function pair", "\t", "\t", '%100s' % "usefull patterns"
-print "-------------", "\t", "\t", '%100s' % "----------------"
-counter = 1
-for item in sorted(deletion_dic.keys()):
-	print '%10s' %str(int(item.split("_")[0])-1)+"_"+str(int(item.split("_")[1])-1), "\t",'%100s' %used_dic[item]
-	counter += 1
-	if counter == len_of_list-2:
-		print "------------------------------------------------------------"*2
-		counter = 1
-
+package.report_usefull_patterns_per_round(used_dic, len_of_list)
 
 final_unsed_patterns = []
 for item in range(1, number_of_lines+1):

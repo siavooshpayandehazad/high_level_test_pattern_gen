@@ -49,6 +49,7 @@ pre_determinde_patterns = {
 
 generated_files_folder = "../generated_files"
 
+
 def final_un_used_pattern(number_of_patterns, final_set_of_patterns):
 	"""
 	takes the number of patterns and list of final set of patterns and returns a list of un-used 
@@ -76,6 +77,7 @@ def parse_input_pattern_file(input_file_name):
 				function_dict[line_counter] = list_of_functions[1:]
 	return function_dict
 
+
 def generate_folders(generated_files_folder):
 	"""
 	This function checkes if the generated_files_folder exists, if so, it removes all the files in it
@@ -90,6 +92,7 @@ def generate_folders(generated_files_folder):
 	else:
 	    os.mkdir(generated_files_folder)
 	return None
+
 
 def make_table_header(table_file, len_of_list):
 	"""
@@ -120,6 +123,53 @@ def find_most_signifacant_scanning(function_dict, function_id_1, current_covered
 		else:
 			list_of_ones_in_ands[new_ones.count("1")] = [i]
 	return list_of_ones_in_ands
+
+
+def find_most_signifacant_conformity(function_dict, function_id_1, function_id_2, list_of_used_patterns, list_of_excluded_patterns, current_covered, debug, verbose):
+	"""
+	takes the current state of the covered nodes, i.e. current_covered as a string of binary number 
+	and searches in the patterns in list_of_used_patterns and returns a dictionary with number of 
+	ones as keys and list pattern numbers as value.
+	
+	Example:
+			current_covered:    10011101 
+	patterns in list_of_used_patterns:
+	
+			pattern no |final and_op for pattern
+			-----------|------------------------
+				1	   |		00001111
+				2	   |		10101010
+				3	   |		11110000
+				4	   |		01010101
+				5	   |		00110011
+
+	list_of_ones_in_ands = {1: [1, 4], 2:[2, 3, 5]}	
+	"""
+	list_of_ones_in_ands = {}
+	or_op = "00000000"
+	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
+	if verbose:
+		print "\tcurrently covered:", current_covered
+		print "\tcurrently not covered:", not_covered
+	if debug:
+		print "\tfinding the patterns with most uncovered ones!"
+		print "\t\tline\top1\t\top2\t\tfunc_1 \t\t func_2\t\txor(1,2)\tand(1,xor)\tor(prev_or,and)"
+		print "\t\t"+"------------------------------------------"*3
+	for i in sorted(function_dict.keys()):
+		if i in list_of_used_patterns:
+			if i not in list_of_excluded_patterns:
+				xor_op = format(int(function_dict[i][function_id_1], 2) ^ int(function_dict[i][function_id_2], 2), 'b').zfill(8)
+				and_op = format(int(function_dict[i][function_id_2], 2) & int(xor_op, 2), 'b').zfill(8)
+				new_ones =  format(int(not_covered, 2) & int(and_op, 2), 'b').zfill(8) 
+				if new_ones.count("1") in list_of_ones_in_ands.keys():
+					list_of_ones_in_ands[new_ones.count("1")].append(i)
+				else:
+					list_of_ones_in_ands[new_ones.count("1")] = [i]
+				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)		
+				if debug:		
+					print "\t\t"+str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][function_id_1], "\t", function_dict[i][function_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op)
+	return list_of_ones_in_ands
+
 
 def print_results(final_set_of_patterns, final_unsed_patterns, verbose):
 	print "------------------------------------------"*3

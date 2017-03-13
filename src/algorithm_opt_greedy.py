@@ -11,31 +11,6 @@ package.generate_folders(package.generated_files_folder)
 sys.stdout = Logger.Logger(package.generated_files_folder)
 
 
-def find_most_signifacant(function_dict, function_id_1, function_id_2, list_of_used_patterns, list_of_excluded_patterns, current_covered, debug, verbose):
-	list_of_ones_in_ands = {}
-	or_op = "00000000"
-	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
-	if verbose:
-		print "\tcurrently covered:", current_covered
-		print "\tcurrently not covered:", not_covered
-	if debug:
-		print "\tfinding the patterns with most uncovered ones!"
-		print "\t\tline\top1\t\top2\t\tfunc_1 \t\t func_2\t\txor(1,2)\tand(1,xor)\tor(prev_or,and)"
-		print "\t\t"+"------------------------------------------"*3
-	for i in sorted(function_dict.keys()):
-		if i in list_of_used_patterns:
-			if i not in list_of_excluded_patterns:
-				xor_op = format(int(function_dict[i][function_id_1], 2) ^ int(function_dict[i][function_id_2], 2), 'b').zfill(8)
-				and_op = format(int(function_dict[i][function_id_2], 2) & int(xor_op, 2), 'b').zfill(8)
-				new_ones =  format(int(not_covered, 2) & int(and_op, 2), 'b').zfill(8) 
-				if new_ones.count("1") in list_of_ones_in_ands.keys():
-					list_of_ones_in_ands[new_ones.count("1")].append(i)
-				else:
-					list_of_ones_in_ands[new_ones.count("1")] = [i]
-				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)		
-				if debug:		
-					print "\t\t"+str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][function_id_1], "\t", function_dict[i][function_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op)
-	return list_of_ones_in_ands
 
 def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patterns, debug, verbose):
 	or_op = "00000000"
@@ -106,7 +81,8 @@ for func_id_1 in range(2, len_of_list):
 			sufficient =  check_if_sufficient(function_dict, func_id_1, func_id_2, list_of_excluded_patterns, debug, verbose)
 
 			while(counter < number_of_lines):
-				list_of_ones_in_ands = find_most_signifacant(function_dict, func_id_1, func_id_2, list_of_used_patterns, list_of_excluded_patterns, sufficient, debug, verbose)
+				list_of_ones_in_ands = package.find_most_signifacant_conformity(function_dict, func_id_1, func_id_2, list_of_used_patterns, 
+																				list_of_excluded_patterns, sufficient, debug, verbose)
 			 	if len(list_of_ones_in_ands.keys())>0:
 			 		if verbose:
 					 	print "\tmax number of ones:", max(list_of_ones_in_ands.keys())
@@ -222,7 +198,6 @@ for func_id_1 in range(2, len_of_list):
 	scanning_string += "\t"+str(scanning_test_f1)
 	scanning_table_file.write(scanning_string+"\n")					
 	table_file.write(string+"\n")
-
 
 stop_time = time.time()
 

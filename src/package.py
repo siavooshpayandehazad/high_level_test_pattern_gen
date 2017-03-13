@@ -21,8 +21,6 @@ related_functions = { "10_11" : "10000000",  	# SHR, ASR
 					  "6_2"   : "11111110",		# OR, ADD
 					  "6_3"   : "11111110",		# OR, SUB
 					  "6_11"  : "01111111",		# OR, ASR
-					  # functions 6 adn 12 are not related! 
-					  # "6_12"  : "01111111",	# OR, INC ?? 	
 					  "11_14"  : "01111111",	# ASR, RLC
 					  "11_15"  : "01111111",	# ASR, RRC
 					  "14_11"  : "01111111",	# ASR, RLC
@@ -48,6 +46,22 @@ pre_determinde_patterns = {
 							"F15" : [1, 2, 3, 4, 5, 6, 10, 15, 9, 11, 14, 16, 20], 
 							"F16" : [1, 2, 3, 4, 7, 6], 
 } 
+
+generated_files_folder = "../generated_files"
+
+def final_un_used_pattern(number_of_patterns, final_set_of_patterns):
+	"""
+	takes the number of patterns and list of final set of patterns and returns a list of un-used 
+	patterns!
+	number_of_patterns: integer: number of patterns in the input pattern file!
+	final_set_of_patterns:  list of integers: list containing all the patterns chosen by the algorithm!
+	"""
+	final_unused_patterns = []
+	for item in range(1, number_of_patterns+1):
+		if item not in final_set_of_patterns:
+			final_unused_patterns.append(item)
+
+	return final_unused_patterns
 
 
 def parse_input_pattern_file(input_file_name):

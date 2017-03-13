@@ -7,10 +7,8 @@ import itertools
 import time
 import package
 
-generated_files_folder = "../generated_files"
-package.generate_folders(generated_files_folder)
-sys.stdout = Logger.Logger(generated_files_folder)
-
+package.generate_folders(package.generated_files_folder)
+sys.stdout = Logger.Logger(package.generated_files_folder)
 
 
 def find_most_signifacant(function_dict, function_id_1, function_id_2, list_of_used_patterns, list_of_excluded_patterns, current_covered, debug, verbose):
@@ -61,7 +59,7 @@ def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patter
 			print "\tdidnt reach all ones!"
 		return or_op
 
-input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction = package.parse_program_arg(sys.argv, generated_files_folder)
+input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction = package.parse_program_arg(sys.argv, package.generated_files_folder)
 
 start_time = time.time()
 
@@ -87,8 +85,8 @@ final_set_of_patterns = []
 
 for func_id_1 in range(2, len_of_list):
 	scanning_test_f1 = "00000000"
-	string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
-	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") # -1 to march the number of functions for readability
+	string =  '%10s' %("f_"+str(func_id_1-1)+"|") 			# -1 to march the number of functions for readability
+	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") 	# -1 to march the number of functions for readability
 	scanning_test_f1 = "00000000"
 	for func_id_2 in range(2, len_of_list):		
 		if func_id_1 != func_id_2:
@@ -155,15 +153,12 @@ for func_id_1 in range(2, len_of_list):
 			if verbose:
 				print "best conformity solution for func ", func_id_1-1, " and func ", func_id_2-1, ": ", sufficient, best_solution
 
-			
-
 			if verbose:
 				print "------------------------------"
 
 			for final_pattern in best_solution:
 				if final_pattern not in final_set_of_patterns:
 					final_set_of_patterns.append(final_pattern)
-			 
 				
 			string += "\t"+str(sufficient)
 
@@ -171,7 +166,6 @@ for func_id_1 in range(2, len_of_list):
 				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
  
 			if redundant_function_reduction and (str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys()):
-				#print "here", func_id_1-1, func_id_2-1, sufficient, package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)]
 				number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
 			elif sufficient != "00000000":
 				number_of_zeros_in_experiments  += sufficient.count("0")
@@ -182,7 +176,6 @@ for func_id_1 in range(2, len_of_list):
 			scanning_test_f1_f2 = "00000000"
 			string += "\t"+"xxxxxxxx"
 
-	#print "SCANNING RESULT for function", func_id_1, ": ", scanning_test
 		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(8)
 		scanning_string += "\t"+str(scanning_test_f1_f2)
 
@@ -230,21 +223,17 @@ for func_id_1 in range(2, len_of_list):
 	scanning_table_file.write(scanning_string+"\n")					
 	table_file.write(string+"\n")
 
- 
 
 stop_time = time.time()
 
-final_unsed_patterns = []
-for item in range(1, number_of_lines+1):
-	if item not in final_set_of_patterns:
-		final_unsed_patterns.append(item)
+final_unused_patterns = copy.deepcopy(package.final_un_used_pattern(number_of_lines, final_set_of_patterns))
 
 for item in sorted(final_set_of_patterns):
 	test_patterns_file.write(str(function_dict[item][0])+""+str(function_dict[item][1])+"\n")
 
 # reports!
 package.report_usefull_patterns_per_round(used_dic, len_of_list)
-package.print_results(final_set_of_patterns, final_unsed_patterns, verbose)
+package.print_results(final_set_of_patterns, final_unused_patterns, verbose)
 package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 
 print "------------------------------------------"*3

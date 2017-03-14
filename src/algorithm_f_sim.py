@@ -46,7 +46,6 @@ for func_id_1 in range(2, len_of_list):
 	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") 	# -1 to march the number of functions for readability
  	if "F"+str(func_id_1-1) in  package.pre_determinde_patterns.keys():
 	 	list_of_used_patterns = package.pre_determinde_patterns["F"+str(func_id_1-1)]
-	 	
 		list_of_necessary_patterns = []
 		scanning_test_f1 = "00000000"
 		for func_id_2 in range(2, len_of_list):	

@@ -59,7 +59,6 @@ used_dic = {}
 final_set_of_patterns = []
 
 for func_id_1 in range(2, len_of_list):
-	scanning_test_f1 = "00000000"
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") 			# -1 to march the number of functions for readability
 	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") 	# -1 to march the number of functions for readability
 	scanning_test_f1 = "00000000"

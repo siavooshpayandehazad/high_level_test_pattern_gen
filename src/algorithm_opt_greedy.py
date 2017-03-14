@@ -158,43 +158,7 @@ for func_id_1 in range(2, len_of_list):
 	#-------------------------------------------------------------------------------
 	#	This part fixes the scanning test results for the current function pair
 	#-------------------------------------------------------------------------------
-	
-	if scanning_test_f1.count("1") != len(scanning_test_f1):
-		scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
-		max_coverable_scanning = max(scanning_dict.keys())
-		if verbose:
-			print "number of missing ones:", scanning_test_f1.count("0")
-			print "max ones that can be covered:", max_coverable_scanning
-		if scanning_test_f1.count("0") == max_coverable_scanning:
-			if scanning_dict[max_coverable_scanning][0] not in best_solution:
-				if verbose:
-					print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions for scanning test!"
-				best_solution.append(scanning_dict[max_coverable_scanning][0])
-				scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
-			if verbose:
-				print "All ones!"
-		elif max_coverable_scanning == 0:
-			if verbose:
-				print "scanning test can not be improved!"
-		else:
-			while max_coverable_scanning != 0:
-				if scanning_dict[max_coverable_scanning][0] not in best_solution:
-					if verbose:
-						print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
-					best_solution.append(scanning_dict[max_coverable_scanning][0])
-					scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
-					scanning_dict = package.find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
-					max_coverable_scanning = max(scanning_dict.keys())
-					if scanning_test_f1.count("0") == max_coverable_scanning:
-						if scanning_dict[max_coverable_scanning][0] not in best_solution:
-							if verbose:
-								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions scanning test!"
-							best_solution.append(scanning_dict[max_coverable_scanning][0])
-							scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
-						if verbose:
-							print "All ones!"
-						break
-
+	scanning_test_f1, best_solution = package.run_scanning_optimization(scanning_test_f1, function_dict, func_id_1, debug, verbose, best_solution)
 	scanning_string += "\t"+str(scanning_test_f1)
 	scanning_table_file.write(scanning_string+"\n")					
 	table_file.write(string+"\n")

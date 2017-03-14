@@ -50,6 +50,46 @@ pre_determinde_patterns = {
 generated_files_folder = "../generated_files"
 
 
+def run_scanning_optimization(scanning_test_f1, function_dict, func_id_1, debug, verbose, list_of_necessary_patterns):
+	if scanning_test_f1.count("1") != len(scanning_test_f1):
+		scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
+		max_coverable_scanning = max(scanning_dict.keys())
+		if verbose:
+			print "number of missing ones:", scanning_test_f1.count("0")
+			print "max ones that can be covered:", max_coverable_scanning
+		if scanning_test_f1.count("0") == max_coverable_scanning:
+			if scanning_dict[max_coverable_scanning][0] not in list_of_necessary_patterns:
+				if verbose:
+					print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions for scanning test!"
+				list_of_necessary_patterns.append(scanning_dict[max_coverable_scanning][0])
+				scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+			if verbose:
+				print "All ones!"
+		elif max_coverable_scanning == 0:
+			if verbose:
+				print "scanning test can not be improved!"
+		else:
+			while max_coverable_scanning != 0:
+				if scanning_dict[max_coverable_scanning][0] not in list_of_necessary_patterns:
+					if verbose:
+						print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
+					list_of_necessary_patterns.append(scanning_dict[max_coverable_scanning][0])
+					scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+					scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
+					max_coverable_scanning = max(scanning_dict.keys())
+					if scanning_test_f1.count("0") == max_coverable_scanning:
+						if scanning_dict[max_coverable_scanning][0] not in list_of_necessary_patterns:
+							if verbose:
+								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions scanning test!"
+							list_of_necessary_patterns.append(scanning_dict[max_coverable_scanning][0])
+							scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+						if verbose:
+							print "All ones!"
+						break
+	return scanning_test_f1, list_of_necessary_patterns
+
+	
+
 def final_un_used_pattern(number_of_patterns, final_set_of_patterns):
 	"""
 	takes the number of patterns and list of final set of patterns and returns a list of un-used 

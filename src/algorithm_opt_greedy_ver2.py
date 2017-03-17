@@ -57,7 +57,7 @@ number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
 used_dic = {}
 final_set_of_patterns = []
-overa_test_length = 0
+overal_test_length = 0
 for func_id_1 in range(2, len_of_list):
 	current_set_of_patterns = []
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") 			# -1 to march the number of functions for readability
@@ -173,7 +173,7 @@ for func_id_1 in range(2, len_of_list):
 		if int(item.split("_")[0]) == func_id_1:
 			if len(used_dic[item])>max_lenght:
 				max_lenght = len(used_dic[item])
-	overa_test_length += max_lenght
+	overal_test_length += max_lenght
 	print  "function id: ", func_id_1-1, "\ttest length:", max_lenght
 
 stop_time = time.time()
@@ -185,7 +185,7 @@ for item in sorted(final_set_of_patterns):
 
 # reports!
 package.report_usefull_patterns_per_round(used_dic, len_of_list)
-print "overal test length:", overa_test_length
+print "overal test length:", overal_test_length
 package.print_results(final_set_of_patterns, final_unused_patterns, verbose)
 package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 

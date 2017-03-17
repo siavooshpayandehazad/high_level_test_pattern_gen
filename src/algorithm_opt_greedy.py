@@ -164,6 +164,7 @@ for func_id_1 in range(2, len_of_list):
 
 
 print "reporting test length for functions:"
+
 for func_id_1 in range(2, len_of_list):
 	patterns_for_current_function = []
 	#print "starting with list: ", final_set_of_patterns, "length:", len(final_set_of_patterns)

@@ -40,6 +40,7 @@ used_dic = {}
 number_of_ones_in_experiments = 0
 number_of_zeros_in_experiments = 0
 final_set_of_patterns = []
+overa_test_length = 0
 for func_id_1 in range(2, len_of_list):
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") 			# -1 to march the number of functions for readability
 	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") 	# -1 to march the number of functions for readability
@@ -137,6 +138,7 @@ for func_id_1 in range(2, len_of_list):
 	opcode = "{0:04b}".format((func_id_1-2))
 	for j in list_of_necessary_patterns:
 		saf_test_patterns_file.write(function_dict[j][0]+function_dict[j][1]+opcode+"\n")
+	overa_test_length +=   len(list_of_necessary_patterns)
 
 # final set of patterns	
 for k in final_set_of_patterns:
@@ -151,6 +153,7 @@ stop_time = time.time()
 final_unused_patterns = copy.deepcopy(package.final_un_used_pattern(number_of_lines, final_set_of_patterns))
 
 package.report_usefull_patterns_per_round(used_dic, len_of_list)
+print "overal test length:", overa_test_length
 package.print_results(final_set_of_patterns, final_unused_patterns, verbose)
 package.print_fault_coverage(number_of_lines, number_of_ones_in_experiments, number_of_zeros_in_experiments)
 

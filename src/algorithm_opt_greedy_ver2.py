@@ -1,5 +1,5 @@
 # Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran
-
+# for each new function we start from empty set!
 import Logger
 import sys
 import copy
@@ -59,6 +59,7 @@ used_dic = {}
 final_set_of_patterns = []
 overa_test_length = 0
 for func_id_1 in range(2, len_of_list):
+	current_set_of_patterns = []
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") 			# -1 to march the number of functions for readability
 	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") 	# -1 to march the number of functions for readability
 	scanning_test_f1 = "00000000"
@@ -72,7 +73,7 @@ for func_id_1 in range(2, len_of_list):
 				print "------------------------------------------"*3
 			
 			counter = 0
-			list_of_excluded_patterns = copy.deepcopy(final_set_of_patterns)
+			list_of_excluded_patterns = copy.deepcopy(current_set_of_patterns)
 			break_the_loop = False
 			best_solution = []
 			best_value = 0
@@ -132,8 +133,8 @@ for func_id_1 in range(2, len_of_list):
 				print "------------------------------"
 
 			for final_pattern in best_solution:
-				if final_pattern not in final_set_of_patterns:
-					final_set_of_patterns.append(final_pattern)
+				if final_pattern not in current_set_of_patterns:
+					current_set_of_patterns.append(final_pattern)
 				
 			string += "\t"+str(sufficient)
 
@@ -146,7 +147,7 @@ for func_id_1 in range(2, len_of_list):
 				number_of_zeros_in_experiments  += sufficient.count("0")
 			number_of_ones_in_experiments  += sufficient.count("1")
 			
-			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(final_set_of_patterns)
+			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(current_set_of_patterns)
 		else:
 			scanning_test_f1_f2 = "00000000"
 			string += "\t"+"xxxxxxxx"
@@ -161,39 +162,19 @@ for func_id_1 in range(2, len_of_list):
 	scanning_string += "\t"+str(scanning_test_f1)
 	scanning_table_file.write(scanning_string+"\n")					
 	table_file.write(string+"\n")
-
+	for k in current_set_of_patterns:
+		if k not in final_set_of_patterns:
+			final_set_of_patterns.append(k)
 
 print "reporting test length for functions:"
 for func_id_1 in range(2, len_of_list):
-	patterns_for_current_function = []
-	#print "starting with list: ", final_set_of_patterns, "length:", len(final_set_of_patterns)
-	for func2 in range(2, len_of_list):	
-		or_op = "00000000"
-		if func2 != func_id_1:
-			for j in final_set_of_patterns:
-				#if j not in patterns_for_current_function:	
-				xor_op = format(int(function_dict[j][func_id_1], 2) ^ int(function_dict[j][func2], 2), 'b').zfill(8)
-				and_op = format(int(function_dict[j][func2], 2) & int(xor_op, 2), 'b').zfill(8)
-				prev_or = or_op
-				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)
-				if prev_or == or_op or or_op == "00000000":
-					pass
-				else:
-					if or_op != "00000000":		
-						if j not in patterns_for_current_function:
-							patterns_for_current_function.append(j)
-					if or_op == "11111111":
-						#print "found solution for pair:", func_id_1-1, func2-1	
-						break
-			if or_op != "11111111":
-				if verbose:
-					print  "INFO::  Didn't find a solution!", func_id_1-1, func2-1	
-	#if verbose:				
-	#print  "neccessary patterns for function", func_id_1-1, "\t\t", patterns_for_current_function, "\t\t\ttest length:", len(patterns_for_current_function)
-	print  "function id: ", func_id_1-1, "\ttest length:", len(patterns_for_current_function)
-	
-	overa_test_length += len(patterns_for_current_function)
-
+	max_lenght = 0
+	for item in used_dic.keys():
+		if int(item.split("_")[0]) == func_id_1:
+			if len(used_dic[item])>max_lenght:
+				max_lenght = len(used_dic[item])
+	overa_test_length += max_lenght
+	print  "function id: ", func_id_1-1, "\ttest length:", max_lenght
 
 stop_time = time.time()
 

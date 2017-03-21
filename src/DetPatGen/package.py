@@ -6,7 +6,7 @@ op_dic = {
 	"and" 	:	"0100" ,
 	"or" 	:	"0101" ,
 	"xor" 	:	"0110" ,
-	"no" 	:	"0111" ,
+	"not" 	:	"0111" ,
 	"shl" 	:	"1000" ,
 	"shr" 	:	"1001" ,
 	"asr" 	:	"1010" ,
@@ -17,4 +17,4 @@ op_dic = {
 	"nop" 	:	"1111" ,
 }
 
-list_of_operations = ["mov","add","sub","cmp","and","or" ,"xor","no" ,"shl","shr","asr","inc","dec","rlc","rrc","nop"]
+list_of_operations = ["mov","add","sub","cmp","and","or" ,"xor","not" ,"shl","shr","asr","inc","dec","rlc","rrc","nop"]

@@ -160,13 +160,13 @@ for plot in list_of_plots:
 	y = copy.deepcopy(temp_y)
 
 	# plotting the data!
-	plt.plot(x, y_opt_v2_rfr, "o--r", label="opt v2, rfr")
+	plt.plot(x, y_opt_v2_rfr, "o-.r", label="opt v2, rfr")
 	plt.plot(x, y_opt_v2, "x--r", label="opt v2, no rfr")
 
-	plt.plot(x, y_opt_rfr, "o--b", label="opt, rfr")
+	plt.plot(x, y_opt_rfr, "o-.b", label="opt, rfr")
 	plt.plot(x, y_opt, "x--b", label="opt, no rfr") 
 
-	plt.plot(x, y_rfr, "o--c",  label="no opt, rfr")
+	plt.plot(x, y_rfr, "o-.c",  label="no opt, rfr")
 	plt.plot(x, y, "x--c", label="no opt, no rfr")
 
 	# here we mark the maximum values of each 
@@ -178,10 +178,22 @@ for plot in list_of_plots:
 	plt.plot((0, x[y_opt.index(max(y_opt))]), (max(y_opt), max(y_opt)), 'y--')
 	plt.plot((0, x[y.index(max(y))]), (max(y), max(y)), 'y--')
 
+	#find max y 
+	axes = plt.gca()
+	
+	min_y = min(min(y_opt_v2_rfr), min(y_opt_v2), min(y_opt_rfr), min(y_rfr), min(y_opt), min(y))
+	if plot == "fault coverage":
+		max_y = 101
+	else:
+		max_y = max(max(y_opt_v2_rfr), max(y_opt_v2), max(y_opt_rfr), max(y_rfr), max(y_opt), max(y))*1.05
+	axes.set_ylim([min_y*0.95,max_y])
+
 	# adding lables!
 	plt.xlabel("Search Space(number of initial patterns)")
 	if plot == "time taken":
 		plt.ylabel(plot+"(s)")
+	elif plot == "fault coverage":
+		plt.ylabel(plot+"(%)")
 	else:
 		plt.ylabel(plot)
 

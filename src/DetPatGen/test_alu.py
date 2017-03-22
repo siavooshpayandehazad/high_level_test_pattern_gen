@@ -4,15 +4,15 @@ from package import *
 import sys
 import copy
 
-print '%7s' %"func1",'%7s' %"func2", '%10s'%"op1", '%10s'%"op2",  "\t\t",'%10s'%"F1",'%10s'%"F2", '%15s'%"XOR(F1,F2)", '%15s'%"AND(XOR,F2)"
-print "-----------------"*6
+#print '%7s' %"func1",'%7s' %"func2", '%10s'%"op1", '%10s'%"op2",  "\t\t",'%10s'%"F1",'%10s'%"F2", '%15s'%"XOR(F1,F2)", '%15s'%"AND(XOR,F2)"
+#print "-----------------"*6
 carry = 0
 full_list_of_ops = copy.deepcopy(list_of_operations)
 k1_list = copy.deepcopy(list_of_operations)
 patterns_taken = []
 
 for key1 in k1_list:
-	print key1
+	print "checking function:", key1
 	op_temp_dic = {
 					"mov" 	:	"00000000" ,
 					"add" 	:	"00000000" ,
@@ -64,7 +64,7 @@ for key1 in k1_list:
 						k2_list.remove(key2)
 						#print "function ", key2, " covered!"		
 	del op_temp_dic
-	print "----------------------------------------"*3
+	#print "----------------------------------------"*3
 
 print len(patterns_taken)
 print patterns_taken

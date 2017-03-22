@@ -17,4 +17,5 @@ op_dic = {
 	"nop" 	:	"1111" ,
 }
 
+# this list is used only to keep order of the op-codes... since dictionaries dont keep the keys in order!
 list_of_operations = ["mov","add","sub","cmp","and","or" ,"xor","not" ,"shl","shr","asr","inc","dec","rlc","rrc","nop"]

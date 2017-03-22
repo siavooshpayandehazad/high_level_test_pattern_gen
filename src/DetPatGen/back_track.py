@@ -14,10 +14,11 @@ list_of_patterns = [(0, 0), (0, 1), (1, 0), (1, 1), (1, 2), (1, 3), (1, 7), (1, 
 					(3, 2), (7, 4), (15, 8), (31, 16), (63, 32), (127, 64), (255, 0), (255, 128), (1, 4), (1, 8), 
 					(1, 16), (1, 32), (1, 64), (1, 128), (1, 129), (5, 0), (9, 0), (17, 0), (33, 0), (65, 0), (129, 0)]
 
-"description:"
-print "in this program, we check all the test patterns in initial list of patterns against each other and "
-print "will calculate f(P1) and f(P2) for all the functions in ALU..."
-print "we say pattern P1 dominates pattern P2 if for all f in the ALU functions, f(P1) < f(P2)"
+print "description:"
+print "\tin this program, we check all the test patterns in initial list of patterns against each other and "
+print "\twill calculate f(P1) and f(P2) for all the functions in ALU... and remove all the dominated patterns!"
+print "definition: "
+print "\tpattern P1 dominates pattern P2 if for all f in the ALU functions, f(P1) < f(P2)"
 print "---------------------------------------"
 print "starting with ", len(list_of_patterns), "patterns:"
 print list_of_patterns
@@ -35,8 +36,10 @@ for test_pattern_1 in list_of_patterns:
 					if func1 < func2:
 						p1_dominates_p2 = False
 				if p1_dominates_p2:
-					print "\tpattern: ", test_pattern_1, "\tdominates pattern: ", test_pattern_2, "\tremoving pattern ", test_pattern_2, "from the list of patterns!"
 					pattern_list.remove(test_pattern_2)
+					print "\tP1: ", '%10s' %str(test_pattern_1), "\tdominates P2: ", '%10s' %str(test_pattern_2), "\tremoving P2: ", '%10s' %str(test_pattern_2), "from the list!", "\tnumber of remaining patterns:", len(pattern_list)
 print "-----------------------------------------"
+improvement = (float(len(list_of_patterns) - len(pattern_list))/len(list_of_patterns))*100
 print "number of remaining patterns: ", len(pattern_list)
+print "improvement:", "{0:.2f}".format(improvement),"%"
 print "final list of patterns:", pattern_list

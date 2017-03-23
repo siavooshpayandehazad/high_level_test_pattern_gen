@@ -72,4 +72,6 @@ def report_table(opt_patterns, print_to_console):
 			print string
 	if print_to_console:
 		print "number of ones in the table:", number_of_ones
+	del pattern
+	del res_1, res_2, or_val, and_value, xor_value, binary1, binary2, string
 	return number_of_ones

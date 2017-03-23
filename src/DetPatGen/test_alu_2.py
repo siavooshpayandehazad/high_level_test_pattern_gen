@@ -9,7 +9,7 @@ last_round_most_number_of_ones  = 0
 selected_patterns = []
 
 selected_patterns = [(172, 55), (83, 201), (150, 242), (105, 14), (53, 77), 
-					 (200, 177), (127, 126), (0, 1), (2, 30), (32, 32)]
+					 (200, 177), (127, 126), (0, 1), (2, 30), (32, 32), (15, 0)]
 last_round_most_number_of_ones = report_table(selected_patterns, False)
 max_number_of_ones = last_round_most_number_of_ones
 
@@ -20,13 +20,17 @@ while True:
 			counter += 1
 			pattern = [(op_1, op_2)]
 			if pattern[0] not in selected_patterns:
-				number_of_ones = report_table(selected_patterns+pattern, False)
+				temp_list = selected_patterns+pattern
+				number_of_ones = report_table(temp_list, False)
 				if number_of_ones > max_number_of_ones:
-					print "found better solution", selected_patterns+pattern," with", number_of_ones, "ones! patterns counted:", counter
-					report_table(selected_patterns+pattern, False)
+					print "found better solution", temp_list," with", number_of_ones, "ones! patterns counted:", counter
+					#report_table(selected_patterns+pattern, False)
 					max_number_of_ones = number_of_ones
 					best_pattern = pattern
+				del temp_list
 			#print op_1,op_2
+			del number_of_ones
+			del pattern
 	if last_round_most_number_of_ones < max_number_of_ones: 
 		print "adding pattern", best_pattern, "to list of selected patterns!"
 		selected_patterns.append(best_pattern[0])

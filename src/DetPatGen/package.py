@@ -1,6 +1,5 @@
 from ALU import *
 
-
 op_dic = {
 	"mov" 	:	"0000" ,
 	"add" 	:	"0001" ,
@@ -61,9 +60,12 @@ def report_table(opt_patterns, print_to_console):
 					res_2 = alu(pattern[0], pattern[1], op_dic[func2], 0)	
 					binary1 = numpy.binary_repr(res_1, 8)[-8: ]
 					binary2 = numpy.binary_repr(res_2, 8)[-8: ]
-					xor_value = numpy.binary_repr(numpy.bitwise_xor(int(binary1, 2), int(binary2, 2)), 8) [-8: ]
-					and_value = numpy.binary_repr(numpy.bitwise_and(int(xor_value, 2), int(binary2, 2)), 8) [-8: ]
-					or_val = numpy.binary_repr(numpy.bitwise_or(int(and_value, 2), int(or_val, 2)), 8) [-8: ]
+					# xor_value = numpy.binary_repr(numpy.bitwise_xor(int(binary1, 2), int(binary2, 2)), 8) [-8: ]
+					# and_value = numpy.binary_repr(numpy.bitwise_and(int(xor_value, 2), int(binary2, 2)), 8) [-8: ]
+					# or_val = numpy.binary_repr(numpy.bitwise_or(int(and_value, 2), int(or_val, 2)), 8) [-8: ]
+					xor_value = format(int(binary1, 2) ^ int(binary2, 2), 'b').zfill(8)[-8: ]
+					and_value = format(int(binary2, 2) & int(xor_value, 2), 'b').zfill(8)[-8: ]
+					or_val =  format(int(and_value, 2) | int(or_val, 2), 'b').zfill(8)[-8: ]
 				string += or_val+" "
 				number_of_ones += or_val.count("1")
 			else:
@@ -72,6 +74,4 @@ def report_table(opt_patterns, print_to_console):
 			print string
 	if print_to_console:
 		print "number of ones in the table:", number_of_ones
-	del pattern
-	del res_1, res_2, or_val, and_value, xor_value, binary1, binary2, string
 	return number_of_ones

@@ -19,7 +19,7 @@ while True:
 	for op_1 in range(0, 256):
 		for op_2 in range(0, 256):
 			if (counter+1)/1000 > counter/1000:
-				print "patterns counted:", counter+1, "\t"+str(float(counter)/(256*256))+"% of search space covered!"
+				print "patterns counted:", counter+1, "\t"+str((float(counter)/(256*256))*100)+"% of search space covered!"
 			counter += 1
 			pattern = [(op_1, op_2)]
 			if pattern[0] not in selected_patterns:

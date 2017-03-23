@@ -9,7 +9,6 @@ selected_patterns = []
 
 
 counter = 0
-counter_digits = 0
 for op_1 in range(0, 256):
 	for op_2 in range(0, 256):
 		counter += 1
@@ -23,9 +22,8 @@ for op_1 in range(0, 256):
 				best_pattern = pattern
 				selected_patterns.append(best_pattern[0])
 		#print counter
-		if counter/1000>counter_digits:
-			counter_digits = counter/1000
-			print counter_digits
+		iif (counter+1)/1000 > counter/1000:
+				print "patterns counted:", counter+1, "\t"+str((float(counter)/(256*256))*100)+"% of search space covered!"
 		if max_number_of_ones  == 1622:
 			break
 	if max_number_of_ones  == 1622:

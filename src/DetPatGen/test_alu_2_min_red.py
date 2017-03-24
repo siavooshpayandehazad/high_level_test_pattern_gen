@@ -9,9 +9,10 @@ import gc
 # but also we want to maximize the redundency between the patterns
 max_number_of_ones = 0
 last_round_most_number_of_ones  = 0
-selected_patterns = [(172, 55), (83, 201), (202, 174), (53, 80), 
-					 (128, 133), (105, 105), (31, 31), (215, 244),
-					 (255, 224), (0, 2), (16, 16), (64, 64)]
+selected_patterns = [(172, 55),  (83, 201),  (202, 174), (53, 80), 
+					 (128, 133), (105, 105), (31, 31),   (215, 244),
+					 (255, 224), (0, 2), 	 (16, 16),   (64, 64), 
+					 (127, 0)]
 last_round_most_number_of_ones = report_table(selected_patterns, False)
 max_number_of_ones = last_round_most_number_of_ones
 

@@ -7,16 +7,13 @@ import gc
 
 max_number_of_ones = 0
 last_round_most_number_of_ones  = 0
-selected_patterns = []
-
-selected_patterns = [(172, 55), (83, 201), (150, 242), (105, 14), (53, 77), (200, 177), 
-					 (127, 126), (0, 1), (2, 30), (32, 32), (15, 0), (63, 0), (128, 128), 
-					 (255, 128), (7, 0), (16, 16), (31, 0), (64, 64), (8, 8)] # 100% coverage
+selected_patterns = [(172, 55), (83, 201), (150, 242), (105, 14)]
 last_round_most_number_of_ones = report_table(selected_patterns, False)
 max_number_of_ones = last_round_most_number_of_ones
 
 while True:
 	counter = 0
+	this_rounds_good_solutions = []
 	for op_1 in range(0, 256):
 		for op_2 in range(0, 256):
 			if (counter+1)/1000 > counter/1000:
@@ -27,15 +24,24 @@ while True:
 				temp_list = selected_patterns+pattern
 				number_of_ones = report_table(temp_list, False)
 				if number_of_ones > max_number_of_ones:
-					print "found better solution", temp_list," with", number_of_ones, "ones! patterns counted:", counter
 					#report_table(selected_patterns+pattern, False)
+					this_rounds_good_solutions = [pattern[0]]
 					max_number_of_ones = number_of_ones
-					best_pattern = pattern
+					print "found better solution", temp_list," with", number_of_ones, "ones! patterns counted:", counter, "list of good solutions:", this_rounds_good_solutions 
+				elif number_of_ones == max_number_of_ones:
+					this_rounds_good_solutions.append(pattern[0])
+					print "found good solution", temp_list," with", number_of_ones, "ones! patterns counted:", counter, "list of good solutions:", this_rounds_good_solutions
 				del temp_list, number_of_ones
 			#print op_1,op_2
 			del pattern
 
 	if last_round_most_number_of_ones < max_number_of_ones: 
+		ones = 0
+		for p in this_rounds_good_solutions:
+			pattern_ones = report_table([p], False)
+			if ones < pattern_ones:
+				ones = pattern_ones
+				best_pattern = [p]
 		print "adding pattern", best_pattern, "to list of selected patterns!"
 		selected_patterns.append(best_pattern[0])
 		last_round_most_number_of_ones = max_number_of_ones

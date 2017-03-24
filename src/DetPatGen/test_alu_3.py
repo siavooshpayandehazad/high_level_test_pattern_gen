@@ -17,7 +17,7 @@ for op_1 in range(0, 256):
 			number_of_ones = report_table(selected_patterns+pattern, False)
 			if number_of_ones > max_number_of_ones:
 				print "found better solution with ", len(selected_patterns+pattern),"patterns with", number_of_ones, "ones! patterns counted:", counter
-				report_table(selected_patterns+pattern, False)
+				#report_table(selected_patterns+pattern, False)
 				max_number_of_ones = number_of_ones
 				best_pattern = pattern
 				selected_patterns.append(best_pattern[0])

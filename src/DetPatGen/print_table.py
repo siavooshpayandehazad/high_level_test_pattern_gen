@@ -1,5 +1,6 @@
 from ALU import *
- 
+from package import report_function_res
+
 op_dic = {
 	"mov" 	:	"0000" ,
 	"add" 	:	"0001" ,
@@ -23,12 +24,23 @@ op_dic = {
 list_of_operations = ["mov","add","sub","cmp","and","or" ,"xor","not" ,"shl","shr","asr","inc","dec","rlc","rrc","nop"]
 
 
-opt_patterns = [(172, 55), (83, 201),  (150, 242), (105, 14), 
-					 (53, 77),  (200, 177), (127, 126), (0, 7), 
-					 (91, 139), (111, 162), (95, 130),  (191, 2),
-					 (128, 255), (255, 130), (151, 98), (176, 31),
-					 (160, 63), (192, 127), (88, 143)] # 100% coverage
+opt_patterns = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 8), (0, 9), 
+					 (0, 16), (0, 17), (0, 32), (0, 33), (0, 64), (0, 65), (0, 128), 
+					 (0, 129), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 7), (1, 8), 
+					 (1, 15), (1, 16), (1, 31), (1, 32), (1, 63), (1, 64), (1, 127), 
+					 (1, 128), (1, 255), (2, 0), (2, 1), (2, 2), (2, 4), (3, 0), 
+					 (3, 2), (3, 4), (4, 0), (4, 1), (4, 2), (4, 4), (4, 8), (5, 0), 
+					 (7, 0), (7, 4), (7, 8), (8, 0), (8, 1), (8, 4), (8, 8), (8, 16), 
+					 (9, 0), (15, 0), (15, 8), (15, 16), (16, 0), (16, 1), (16, 8), 
+					 (16, 16), (16, 32), (17, 0), (31, 0), (31, 16), (31, 32), (32, 0), 
+					 (32, 1), (32, 16), (32, 32), (32, 64), (33, 0), (63, 0), (63, 32), 
+					 (63, 64), (64, 0), (64, 1), (64, 32), (64, 64), (64, 128), (65, 0), 
+					 (127, 0), (127, 64), (127, 128), (128, 0), (128, 1), (128, 64), 
+					 (128, 128), (129, 0), (255, 0), (255, 128)]
 print_to_console = True
+
+report_function_res(opt_patterns)
+
 if print_to_console:
 	print "----------------------------------------------------"*3
 	print "reporting corss function table:"
@@ -59,6 +71,7 @@ for func1 in list_of_operations:
 if print_to_console:
 	print "number of ones in the table:", number_of_ones
 
+print "-------------------------------------------"
 final_pattern_list = opt_patterns
 total_test_length = 0
 for key1 in list_of_operations:
@@ -93,3 +106,28 @@ for key1 in list_of_operations:
 	total_test_length +=  len(func_pattern) 
 print "-------------------------------------------"
 print "total test length:",total_test_length
+
+
+print "-------------------------------------------"
+print "checking the variation in ones in outputs of functions"
+for pattern in opt_patterns:
+	bit_8 = 0
+	bit_7 = 0
+	bit_6 = 0
+	bit_5 = 0
+	bit_4 = 0
+	bit_3 = 0
+	bit_2 = 0
+	bit_1 = 0
+	for function in list_of_operations:
+		func1 = alu(pattern[0], pattern[1], op_dic[function], 0)
+		binary1 = numpy.binary_repr(func1, 8)[-8: ]
+		bit_8 += int(binary1[0])
+		bit_7 += int(binary1[1])
+		bit_6 += int(binary1[2])
+		bit_5 += int(binary1[3])
+		bit_4 += int(binary1[4])
+		bit_3 += int(binary1[5])
+		bit_2 += int(binary1[6])
+		bit_1 += int(binary1[7])
+	print opt_patterns.index(pattern), "\t",bit_8, "\t",bit_7, "\t",bit_6, "\t",bit_5, "\t",bit_4, "\t",bit_3, "\t",bit_2, "\t",bit_1

@@ -9,11 +9,12 @@ max_number_of_ones = 0
 last_round_most_number_of_ones  = 0
 selected_patterns = []
 
-selected_patterns = [(172, 55), (83, 201), (150, 242), (105, 14), (53, 77), (200, 177), 
-					 (127, 126), (0, 1), (2, 30), (32, 32), (15, 0), (63, 0), (128, 128), 
-					 (255, 128), (7, 0), (16, 16), (31, 0), (64, 64), (8, 8)] # 100% coverage
-last_round_most_number_of_ones = report_table(selected_patterns, False)
-max_number_of_ones = last_round_most_number_of_ones
+# these are the final results of the program:
+# selected_patterns = [(172, 55), (83, 201), (150, 242), (105, 14), (53, 77), (200, 177), 
+# 					 (127, 126), (0, 1), (2, 30), (32, 32), (15, 0), (63, 0), (128, 128), 
+# 					 (255, 128), (7, 0), (16, 16), (31, 0), (64, 64), (8, 8)] # 100% coverage
+# last_round_most_number_of_ones = report_table(selected_patterns, False)
+# max_number_of_ones = last_round_most_number_of_ones
 
 while True:
 	counter = 0

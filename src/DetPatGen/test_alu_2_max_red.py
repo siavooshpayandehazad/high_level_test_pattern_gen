@@ -13,7 +13,7 @@ selected_patterns = [(172, 55), (83, 201),  (150, 242), (105, 14),
 					 (53, 77),  (200, 177), (127, 126), (0, 7), 
 					 (91, 139), (111, 162), (95, 130),  (191, 2),
 					 (128, 255), (255, 130), (151, 98), (176, 31),
-					 (160, 63), (192, 127)]
+					 (160, 63), (192, 127), (88, 143)]
 last_round_most_number_of_ones = report_table(selected_patterns, False)
 max_number_of_ones = last_round_most_number_of_ones
 

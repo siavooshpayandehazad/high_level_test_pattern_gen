@@ -95,6 +95,9 @@ ENV/
 # Rope project settings
 .ropeproject
 
+# ignore ModelSim generated files and directories (temp files and so on)
+[_@]*
+
 # ignore compilation output of ModelSim
 *.mti
 *.dat
@@ -107,7 +110,6 @@ ENV/
 *.bsf
 
 # ignore simulation output of ModelSim
-[_@]*
 wlf*
 *.wlf
 *.vstf

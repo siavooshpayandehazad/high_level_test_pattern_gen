@@ -107,6 +107,7 @@ ENV/
 *.bsf
 
 # ignore simulation output of ModelSim
+[_@]*
 wlf*
 *.wlf
 *.vstf

@@ -114,9 +114,7 @@ def parse_input_pattern_file(input_file_name):
 				line_counter += 1
 				list_of_functions =  line.split(" ")
 				list_of_functions[len(list_of_functions)-1] = list_of_functions[len(list_of_functions)-1][:-2]
-				print list_of_functions
 				function_dict[line_counter] = list_of_functions
-				print function_dict[line_counter]
 	return function_dict
 
 

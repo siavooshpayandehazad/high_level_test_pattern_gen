@@ -10,8 +10,8 @@ __pycache__/
 
 generated_files/*
 script_outputs/*
-sim_generated_file/*
-sim_input/*
+sim_generated_file/
+sim_input/
 
 # Distribution / packaging
 .Python

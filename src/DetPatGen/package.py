@@ -34,7 +34,7 @@ def report_function_res(opt_patterns):
 	print "---"*55
 
 	for pattern in opt_patterns:
-		string = "0000 " + numpy.binary_repr(pattern[0],8) + " " +numpy.binary_repr(pattern[1],8)+ " "
+		string = numpy.binary_repr(pattern[0],8) + " " +numpy.binary_repr(pattern[1],8)+ " "
 		for func in list_of_operations:
 			string +=   numpy.binary_repr(alu(pattern[0], pattern[1], op_dic[func], 0), 8)[-8:]+ " "
 		print string

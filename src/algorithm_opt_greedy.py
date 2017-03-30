@@ -11,21 +11,20 @@ package.generate_folders(package.generated_files_folder)
 sys.stdout = Logger.Logger(package.generated_files_folder)
 
 
-
 def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patterns, debug, verbose):
-	or_op = "00000000"
+	or_op = "0"*package.data_width
 	if debug:
 		print "\t--------------------"
 		print "\tchecking if sufficient number of ones reached!"
 		print "\t\tline\top1\t\top2\t\tfunc_1 \t\t func_2\t\txor(1,2)\tand(1,xor)\tor(prev_or,and)"
 		print "\t\t"+"------------------------------------------"*3
 	for i in list_patterns:
-		xor_op = format(int(function_dict[i][function_id_1], 2) ^ int(function_dict[i][function_id_2], 2), 'b').zfill(8)
-		and_op = format(int(function_dict[i][function_id_2], 2) & int(xor_op, 2), 'b').zfill(8)
-		or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)
+		xor_op = format(int(function_dict[i][function_id_1], 2) ^ int(function_dict[i][function_id_2], 2), 'b').zfill(package.data_width)
+		and_op = format(int(function_dict[i][function_id_2], 2) & int(xor_op, 2), 'b').zfill(package.data_width)
+		or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(package.data_width)
 		if debug:
 			print "\t\t"+str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][function_id_1], "\t", function_dict[i][function_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op)
-	if or_op == "11111111":
+	if or_op == "1"*package.data_width:
 		if verbose:
 			print "\tbingo! all ones!"
 		return or_op
@@ -35,6 +34,9 @@ def check_if_sufficient(function_dict, function_id_1, function_id_2, list_patter
 		return or_op
 
 input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction = package.parse_program_arg(sys.argv, package.generated_files_folder)
+
+data_width = package.data_width
+print "data_width:", data_width
 
 start_time = time.time()
 
@@ -61,10 +63,10 @@ overal_test_length = 0
 for func_id_1 in range(2, len_of_list):
 	string =  '%10s' %("f_"+str(func_id_1-1)+"|") 			# -1 to march the number of functions for readability
 	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") 	# -1 to march the number of functions for readability
-	scanning_test_f1 = "00000000"
+	scanning_test_f1 = "0"*data_width
 	for func_id_2 in range(2, len_of_list):		
 		if func_id_1 != func_id_2:
-			scanning_test_f1_f2 = "00000000"
+			scanning_test_f1_f2 = "0"*data_width
 			list_of_used_patterns =  range(1, number_of_lines+1)
 			if verbose:
 				print "------------------------------------------"*3
@@ -138,20 +140,20 @@ for func_id_1 in range(2, len_of_list):
 			string += "\t"+str(sufficient)
 
 			for scan_pattern in best_solution:
-				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
+				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(data_width)
  
 			if redundant_function_reduction and (str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys()):
 				number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
-			elif sufficient != "00000000":
+			elif sufficient != "0"*data_width:
 				number_of_zeros_in_experiments  += sufficient.count("0")
 			number_of_ones_in_experiments  += sufficient.count("1")
 			
 			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(final_set_of_patterns)
 		else:
-			scanning_test_f1_f2 = "00000000"
-			string += "\t"+"xxxxxxxx"
+			scanning_test_f1_f2 = "0"*data_width
+			string += "\t"+"x"*data_width
 
-		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(8)
+		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(data_width)
 		scanning_string += "\t"+str(scanning_test_f1_f2)
 
 	#-------------------------------------------------------------------------------
@@ -169,24 +171,24 @@ for func_id_1 in range(2, len_of_list):
 	patterns_for_current_function = []
 	#print "starting with list: ", final_set_of_patterns, "length:", len(final_set_of_patterns)
 	for func2 in range(2, len_of_list):	
-		or_op = "00000000"
+		or_op = "0"*data_width
 		if func2 != func_id_1:
 			for j in final_set_of_patterns:
 				#if j not in patterns_for_current_function:	
-				xor_op = format(int(function_dict[j][func_id_1], 2) ^ int(function_dict[j][func2], 2), 'b').zfill(8)
-				and_op = format(int(function_dict[j][func2], 2) & int(xor_op, 2), 'b').zfill(8)
+				xor_op = format(int(function_dict[j][func_id_1], 2) ^ int(function_dict[j][func2], 2), 'b').zfill(data_width)
+				and_op = format(int(function_dict[j][func2], 2) & int(xor_op, 2), 'b').zfill(data_width)
 				prev_or = or_op
-				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)
-				if prev_or == or_op or or_op == "00000000":
+				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(data_width)
+				if prev_or == or_op or or_op == "0"*data_width:
 					pass
 				else:
-					if or_op != "00000000":		
+					if or_op != "0"*data_width:		
 						if j not in patterns_for_current_function:
 							patterns_for_current_function.append(j)
-					if or_op == "11111111":
+					if or_op == "1"*data_width:
 						#print "found solution for pair:", func_id_1-1, func2-1	
 						break
-			if or_op != "11111111":
+			if or_op != "0"*data_width:
 				if verbose:
 					print  "INFO::  Didn't find a solution!", func_id_1-1, func2-1	
 	#if verbose:				

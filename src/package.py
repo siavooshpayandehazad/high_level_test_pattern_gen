@@ -48,7 +48,7 @@ pre_determinde_patterns = {
 } 
 
 generated_files_folder = "../generated_files"
-
+data_width  = 8
 
 def run_scanning_optimization(scanning_test_f1, function_dict, func_id_1, debug, verbose, list_of_necessary_patterns):
 	if scanning_test_f1.count("1") != len(scanning_test_f1):
@@ -62,7 +62,7 @@ def run_scanning_optimization(scanning_test_f1, function_dict, func_id_1, debug,
 				if verbose:
 					print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions for scanning test!"
 				list_of_necessary_patterns.append(scanning_dict[max_coverable_scanning][0])
-				scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+				scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(data_width)
 			if verbose:
 				print "All ones!"
 		elif max_coverable_scanning == 0:
@@ -74,7 +74,7 @@ def run_scanning_optimization(scanning_test_f1, function_dict, func_id_1, debug,
 					if verbose:
 						print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions!"
 					list_of_necessary_patterns.append(scanning_dict[max_coverable_scanning][0])
-					scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+					scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(data_width)
 					scanning_dict = find_most_signifacant_scanning(function_dict, func_id_1, scanning_test_f1, debug, verbose)
 					max_coverable_scanning = max(scanning_dict.keys())
 					if scanning_test_f1.count("0") == max_coverable_scanning:
@@ -82,7 +82,7 @@ def run_scanning_optimization(scanning_test_f1, function_dict, func_id_1, debug,
 							if verbose:
 								print "adding pattern", scanning_dict[max_coverable_scanning][0], "to the list of solutions scanning test!"
 							list_of_necessary_patterns.append(scanning_dict[max_coverable_scanning][0])
-							scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(8)
+							scanning_test_f1 = format(int(scanning_test_f1, 2) | int(function_dict[scanning_dict[max_coverable_scanning][0]][func_id_1], 2), 'b').zfill(data_width)
 						if verbose:
 							print "All ones!"
 						break
@@ -152,12 +152,12 @@ def make_table_header(table_file, len_of_list):
 def find_most_signifacant_scanning(function_dict, function_id_1, current_covered, debug, verbose):
 	list_of_ones_in_ands = {}
 
-	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
+	not_covered = format(int("1"*data_width, 2) ^ int(str(current_covered), 2), 'b').zfill(data_width)		# inverse of the current_covered! to find what has not been covered so far
 	if verbose:
 		print "\tcurrently covered:", current_covered
 		print "\tcurrently not covered:", not_covered
 	for i in sorted(function_dict.keys()):
-		new_ones =  format(int(not_covered, 2) & int(function_dict[i][function_id_1], 2), 'b').zfill(8) 
+		new_ones =  format(int(not_covered, 2) & int(function_dict[i][function_id_1], 2), 'b').zfill(data_width) 
 		if new_ones.count("1") in list_of_ones_in_ands.keys():
 			list_of_ones_in_ands[new_ones.count("1")].append(i)
 		else:
@@ -186,8 +186,8 @@ def find_most_signifacant_conformity(function_dict, function_id_1, function_id_2
 	list_of_ones_in_ands = {1: [1, 4], 2:[2, 3, 5]}	
 	"""
 	list_of_ones_in_ands = {}
-	or_op = "00000000"
-	not_covered = format(int("11111111", 2) ^ int(str(current_covered), 2), 'b').zfill(8)		# inverse of the current_covered! to find what has not been covered so far
+	or_op = "0"*data_width
+	not_covered = format(int("1"*data_width, 2) ^ int(str(current_covered), 2), 'b').zfill(data_width)		# inverse of the current_covered! to find what has not been covered so far
 	if verbose:
 		print "\tcurrently covered:", current_covered
 		print "\tcurrently not covered:", not_covered
@@ -198,14 +198,14 @@ def find_most_signifacant_conformity(function_dict, function_id_1, function_id_2
 	for i in sorted(function_dict.keys()):
 		if i in list_of_used_patterns:
 			if i not in list_of_excluded_patterns:
-				xor_op = format(int(function_dict[i][function_id_1], 2) ^ int(function_dict[i][function_id_2], 2), 'b').zfill(8)
-				and_op = format(int(function_dict[i][function_id_2], 2) & int(xor_op, 2), 'b').zfill(8)
-				new_ones =  format(int(not_covered, 2) & int(and_op, 2), 'b').zfill(8) 
+				xor_op = format(int(function_dict[i][function_id_1], 2) ^ int(function_dict[i][function_id_2], 2), 'b').zfill(data_width)
+				and_op = format(int(function_dict[i][function_id_2], 2) & int(xor_op, 2), 'b').zfill(data_width)
+				new_ones =  format(int(not_covered, 2) & int(and_op, 2), 'b').zfill(data_width) 
 				if new_ones.count("1") in list_of_ones_in_ands.keys():
 					list_of_ones_in_ands[new_ones.count("1")].append(i)
 				else:
 					list_of_ones_in_ands[new_ones.count("1")] = [i]
-				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)		
+				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(data_width)		
 				if debug:		
 					print "\t\t"+str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][function_id_1], "\t", function_dict[i][function_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op)
 	return list_of_ones_in_ands
@@ -251,6 +251,7 @@ def report_usefull_patterns_per_round(used_dic, len_of_list):
 			counter = 1
 
 def parse_program_arg(arguments, generated_files_folder):
+	global data_width
 	if "--help" in arguments[1:] or len(arguments[1:]) == 0:
 		print "---------------------------------------------------------------------------"
 		print "\n     Copyright (C) 2017 Siavoosh Payandeh Azad, Stephen Oyeniran \n"
@@ -262,6 +263,7 @@ def parse_program_arg(arguments, generated_files_folder):
 		print "-op [file name]: spcifies the path to the generated patterns file" 
 		print "-rfr: redundant function reduction, if used, will use the table in package file to ingore the redundency" 
 		print "-v: makes it more verbose" 
+		print "-dw [data width]: data width of the patterns, default is 8" 
 		print "-debug: enables debug printing"
 		print "---------------------------------------------------------------------------"
 		sys.exit()
@@ -298,5 +300,10 @@ def parse_program_arg(arguments, generated_files_folder):
 		redundant_function_reduction = True
 	else:
 		redundant_function_reduction = False
+
+	if "-dw" in arguments[1:]:
+		data_width = int(arguments[arguments.index('-dw') + 1])
+	else:
+		data_width = 8
 
 	return input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction

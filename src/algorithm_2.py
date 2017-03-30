@@ -15,7 +15,10 @@ if "-sp" in sys.argv[1:]:
 else:
 	saf_output_patterns_file_name= package.generated_files_folder + "/" + "SAFpatterns.txt"
 
-input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction= package.parse_program_arg(sys.argv, package.generated_files_folder)
+input_file_name, verbose, debug, output_table_file_name, output_patterns_file_name, scanning_table_file_name, redundant_function_reduction = package.parse_program_arg(sys.argv, package.generated_files_folder)
+
+data_width = package.data_width
+print "data_width:", data_width
 
 start_time = time.time()
 
@@ -46,9 +49,9 @@ for func_id_1 in range(2, len_of_list):
 	scanning_string =  '%10s' %("f_"+str(func_id_1-1)+"|") 	# -1 to march the number of functions for readability
  	list_of_used_patterns =  range(1, number_of_lines+1)
 	list_of_necessary_patterns = []
-	scanning_test_f1 = "00000000"
+	scanning_test_f1 = "0"*data_width
 	for func_id_2 in range(2, len_of_list):	
-		scanning_test_f1_f2 = "00000000"
+		scanning_test_f1_f2 = "0"*data_width
 		if func_id_1 != func_id_2:
 			
 			list_of_pattens_to_delete = []
@@ -60,34 +63,34 @@ for func_id_1 in range(2, len_of_list):
 				print "---------------------------------------------------------------------------------------"
 				print "starting with list: ", list_of_necessary_patterns
 
-			or_op = "00000000"
+			or_op = "0"*data_width
 			for i in list_of_necessary_patterns:
-				xor_op = format(int(function_dict[i][func_id_1], 2) ^ int(function_dict[i][func_id_2], 2), 'b').zfill(8)
-				and_op = format(int(function_dict[i][func_id_2], 2) & int(xor_op, 2), 'b').zfill(8)	
-				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)
+				xor_op = format(int(function_dict[i][func_id_1], 2) ^ int(function_dict[i][func_id_2], 2), 'b').zfill(data_width)
+				and_op = format(int(function_dict[i][func_id_2], 2) & int(xor_op, 2), 'b').zfill(data_width)	
+				or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(data_width)
 				if verbose:
 					print str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][func_id_1], "\t", function_dict[i][func_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op)
 			# print list_of_used_patterns
 			for i in list_of_used_patterns:
 				if i not in list_of_necessary_patterns:
-					xor_op = format(int(function_dict[i][func_id_1], 2) ^ int(function_dict[i][func_id_2], 2), 'b').zfill(8)
-					and_op = format(int(function_dict[i][func_id_2], 2) & int(xor_op, 2), 'b').zfill(8)
+					xor_op = format(int(function_dict[i][func_id_1], 2) ^ int(function_dict[i][func_id_2], 2), 'b').zfill(data_width)
+					and_op = format(int(function_dict[i][func_id_2], 2) & int(xor_op, 2), 'b').zfill(data_width)
 					prev_or = or_op
-					or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(8)
-					if prev_or == or_op or or_op == "00000000":
+					or_op = format(int(or_op, 2) | int(and_op, 2), 'b').zfill(data_width)
+					if prev_or == or_op or or_op == "0"*data_width:
 						if i not in list_of_necessary_patterns:
 							list_of_pattens_to_delete.append(i)
 					else:
-						if or_op != "00000000":
+						if or_op != "0"*data_width:
 							if i not in list_of_necessary_patterns:				
 								list_of_necessary_patterns.append(i)
 								if verbose:
 									print str(i)+"\t", function_dict[i][0],"\t", function_dict[i][1],"\t", function_dict[i][func_id_1], "\t", function_dict[i][func_id_2], "\t", xor_op, "\t"+str(and_op), "\t"+str(or_op) , "\t\tadding pattern ", i, "to final pattern list!"
-						if or_op == "11111111":
+						if or_op == "1"*data_width:
 							if verbose:
 								print  "INFO::  reached all ones!"
 							break
-			if or_op != "11111111":
+			if or_op != "1"*data_width:
 				if verbose:
 					print  "INFO::  Didn't find a solution!"
 
@@ -96,13 +99,13 @@ for func_id_1 in range(2, len_of_list):
 			number_of_ones_in_experiments  += or_op.count("1")
 			if redundant_function_reduction and (str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys()):
 				number_of_zeros_in_experiments  += or_op.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
-			elif or_op != "00000000":
+			elif or_op != "0"*data_width:
 				number_of_zeros_in_experiments  += or_op.count("0")
 			if verbose:
 				print "------------------------------"
 
 			for scan_pattern in list_of_necessary_patterns:
-				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(8)
+				scanning_test_f1_f2 = format(int(scanning_test_f1_f2, 2) | int(function_dict[scan_pattern][func_id_1], 2), 'b').zfill(data_width)
 			
 
 			if verbose:
@@ -115,9 +118,9 @@ for func_id_1 in range(2, len_of_list):
 			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(list_of_necessary_patterns)
 
 		else:
-			string += "\t"+"xxxxxxxx"
+			string += "\t"+"x"*data_width
 
-		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(8)
+		scanning_test_f1 =  format(int(scanning_test_f1, 2) | int(scanning_test_f1_f2, 2), 'b').zfill(data_width)
 		scanning_string += "\t"+str(scanning_test_f1_f2)
 
 	#-------------------------------------------------------------------------------

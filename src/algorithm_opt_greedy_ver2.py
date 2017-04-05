@@ -146,15 +146,15 @@ for func_id_1 in range(2, len_of_list):
  
 			if redundant_function_reduction:
 				if  (str(func_id_1-1)+"_"+str(func_id_2-1) in package.related_functions.keys()): 
-					number_of_zeros_in_experiments  += or_op.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
+					number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_"+str(func_id_2-1)].count("0")
 				elif (str(func_id_1-1)+"_*" in package.related_functions.keys()):
-					number_of_zeros_in_experiments  += or_op.count("0") - package.related_functions[str(func_id_1-1)+"_*"].count("0")
+					number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions[str(func_id_1-1)+"_*"].count("0")
 				elif ("*_"+str(func_id_2-1) in package.related_functions.keys()):
-					number_of_zeros_in_experiments  += or_op.count("0") - package.related_functions["*_"+str(func_id_2-1)].count("0")
+					number_of_zeros_in_experiments  += sufficient.count("0") - package.related_functions["*_"+str(func_id_2-1)].count("0")
 				else:
-					number_of_zeros_in_experiments  += or_op.count("0")
+					number_of_zeros_in_experiments  += sufficient.count("0")
 			else:
-				number_of_zeros_in_experiments  += or_op.count("0")
+				number_of_zeros_in_experiments  += sufficient.count("0")
 			number_of_ones_in_experiments  += sufficient.count("1")
 			
 			used_dic['{0:03}'.format(func_id_1)+"_"+'{0:03}'.format(func_id_2)] = copy.deepcopy(current_set_of_patterns)

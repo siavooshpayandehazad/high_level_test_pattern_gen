@@ -4,6 +4,7 @@ import os
 from shutil import copyfile
 import matplotlib.pyplot as plt
 import re, copy
+from package import data_width
 
 # This script goes through the files in patterns folder and runs them with both 
 # algorithms and with and without redundant function reduction!
@@ -42,14 +43,15 @@ results_alg = {}
 for algorithm in ["algorithm_2", "algorithm_opt_greedy", "algorithm_opt_greedy_ver2"]:
 	for rfr in [False, True]:
 		for file in file_list:
-			
+			print "------------------------------------------"
 			end_of_file_name = ("_opt" if "opt" in algorithm else "") + ("_v2" if "ver2" in algorithm else "") + ("_rfr" if rfr else "")+"_"+file
 			table_file = "table" + end_of_file_name
 			pattern_file = "pattern" + end_of_file_name
 			ost_file = "ost" + end_of_file_name
 			SAF_file = "SAF" + end_of_file_name
 			
-			command = "python "+algorithm+".py"+" -i "+str(input_file_path+"/"+file) +" -ot "+ table_file+" -op "+ pattern_file+" -ost "+ost_file
+			command = "python "+algorithm+".py"+" -i "+str(input_file_path+"/"+file) +" -ot "+ table_file+" -op "+ pattern_file+" -ost "+ost_file + " -dw " + str(data_width)
+
 			file_name = file
 			if "opt" in algorithm:
 				
@@ -60,6 +62,7 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy", "algorithm_opt_greedy_v
 			if rfr:
 				command += " -rfr"
 				file_name = "rfr_"+file_name
+			print "running:", command
 			os.system(command)
 
 			with open("../generated_files/Console.log") as f:

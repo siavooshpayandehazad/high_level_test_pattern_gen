@@ -26,6 +26,7 @@ related_functions = { "10_11" : "10000000",  	# SHR, ASR
 					  "14_11"  : "01111111",	# ASR, RLC
 					  "15_11"  : "01111111",	# ASR, RRC
 					  "11_5"  : "01111111",		# ASR, ANd
+					  "*_16"   :"00000000"
 }
 
 pre_determinde_patterns = {

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import re, copy
 from package import data_width
 
-# This script goes through the files in patterns folder and runs them with both 
+# This script goes through the files in patterns folder and runs them with both
 # algorithms and with and without redundant function reduction!
 # The results would be copied to script_outputs folder and comparison graphs would also
 # be saved in the same folder!
@@ -49,12 +49,12 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy", "algorithm_opt_greedy_v
 			pattern_file = "pattern" + end_of_file_name
 			ost_file = "ost" + end_of_file_name
 			SAF_file = "SAF" + end_of_file_name
-			
+
 			command = "python "+algorithm+".py"+" -i "+str(input_file_path+"/"+file) +" -ot "+ table_file+" -op "+ pattern_file+" -ost "+ost_file + " -dw " + str(data_width)
 
 			file_name = file
 			if "opt" in algorithm:
-				
+
 				if "ver2" in algorithm:
 					file_name = "opt_v2_"+file_name
 				else:
@@ -69,6 +69,7 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy", "algorithm_opt_greedy_v
 				FC = 0
 				time = 0
 				num_of_patterns = 0
+				test_length = 0
 				for line in f:
 					if line != "":
 						if "fault coverage " in line and "%" in line:
@@ -80,17 +81,17 @@ for algorithm in ["algorithm_2", "algorithm_opt_greedy", "algorithm_opt_greedy_v
 						if "overal test length:" in line:
 							test_length = line.split()[3]
 				results_alg[file_name] = [FC, time, num_of_patterns, test_length]
-			
+
 			# copying files from generated files folder to script output folder
 			#TODO: after fixing SAF for the opt version, this list should be updated!
-			for file_to_copy in [table_file, pattern_file, ost_file]: 
+			for file_to_copy in [table_file, pattern_file, ost_file]:
 				copyfile(generated_files_folder+"/"+file_to_copy, script_folder+"/"+file_to_copy)
-	
+
 			if algorithm == "algorithm_2":
 				copyfile(generated_files_folder+"/"+"SAFpatterns.txt", script_folder+"/"+SAF_file)
 
 print "---------------------------"
-print "algorithms results:"  
+print "algorithms results:"
 print '%20s' %"file name", "\t", "fault coverage", "\t", '%20s' %"time taken", "\t", '%18s' %"number of patterns", "\t", '%5s' %"rfr ",  "\t", '%5s' %"opt ", "\t", '%5s' %"test length "
 print '%20s' %"---------", "\t", "--------------", "\t", '%20s' %"----------", "\t", '%18s' %"------------------", "\t", '%5s' %"-----", "\t", '%5s' %"-----", "\t", '%5s' %"-----"
 for file in sorted(results_alg.keys()):
@@ -167,12 +168,12 @@ for plot in list_of_plots:
 	plt.plot(x, y_opt_v2, "x--r", label="opt v2, no rfr")
 
 	plt.plot(x, y_opt_rfr, "o-.b", label="opt, rfr")
-	plt.plot(x, y_opt, "x--b", label="opt, no rfr") 
+	plt.plot(x, y_opt, "x--b", label="opt, no rfr")
 
 	plt.plot(x, y_rfr, "o-.c",  label="no opt, rfr")
 	plt.plot(x, y, "x--c", label="no opt, no rfr")
 
-	# here we mark the maximum values of each 
+	# here we mark the maximum values of each
 	plt.plot((0, x[y_opt_v2_rfr.index(max(y_opt_v2_rfr))]), (max(y_opt_v2_rfr), max(y_opt_v2_rfr)), 'y--')
 	plt.plot((0, x[y_opt_v2.index(max(y_opt_v2))]), (max(y_opt_v2), max(y_opt_v2)), 'y--')
 
@@ -181,9 +182,9 @@ for plot in list_of_plots:
 	plt.plot((0, x[y_opt.index(max(y_opt))]), (max(y_opt), max(y_opt)), 'y--')
 	plt.plot((0, x[y.index(max(y))]), (max(y), max(y)), 'y--')
 
-	#find max y 
+	#find max y
 	axes = plt.gca()
-	
+
 	min_y = min(min(y_opt_v2_rfr), min(y_opt_v2), min(y_opt_rfr), min(y_rfr), min(y_opt), min(y))
 	if plot == "fault coverage":
 		max_y = 101
